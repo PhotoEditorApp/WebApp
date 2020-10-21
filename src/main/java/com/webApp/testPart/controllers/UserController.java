@@ -1,30 +1,28 @@
 package com.webApp.testPart.controllers;
 
 import com.webApp.testPart.domain.User;
-import com.webApp.testPart.repos.UserRepo;
+import com.webApp.testPart.json.ActivateMessage;
+import com.webApp.testPart.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
     @Autowired
-    private UserRepo userRepo;
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-//    public UserController(UserRepo userRepo, BCryptPasswordEncoder bCryptPasswordEncoder) {
-//        this.userRepo = userRepo;
-//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-//    }
+    private UserService userService;
 
     @PostMapping("/signup")
-    public void signUp(@RequestBody User user){
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userRepo.save(user);
+    public void signUp(@RequestBody User user) {
+        userService.userSignUp(user);
+    }
+
+    @GetMapping("/activate/{code}")
+    public ActivateMessage activate(@PathVariable String code) {
+        int a = 1;
+        if (userService.activateUser(code))
+            return new ActivateMessage("User successfully activated");
+        else
+            return new ActivateMessage("Activation is not successful");
     }
 }

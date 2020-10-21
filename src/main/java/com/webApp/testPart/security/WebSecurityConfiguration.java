@@ -21,8 +21,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
     private static final String[] AUTH_WHITELIST = {
-        "/",
-//        "/greetings"
+        "/", "/users/activate/*"
     };
 
     protected void configure(HttpSecurity httpSecurity) throws Exception {

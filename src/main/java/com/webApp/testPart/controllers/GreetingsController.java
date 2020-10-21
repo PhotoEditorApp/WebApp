@@ -1,8 +1,7 @@
 package com.webApp.testPart.controllers;
 
-import com.webApp.testPart.Greetings;
+import com.webApp.testPart.json.Greetings;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,12 +13,12 @@ public class GreetingsController {
     private final AtomicLong counter = new AtomicLong();
 
     @GetMapping("/greetings")
-    public Greetings getGreetings(@RequestParam(value = "name", required = false, defaultValue = "World") String name){
+    public Greetings getGreetings(@RequestParam(value = "name", required = false, defaultValue = "World") String name) {
         return new Greetings(counter.incrementAndGet(), String.format(template, name));
     }
 
     @GetMapping("/")
-    public String index(){
+    public String index() {
         return "redirect:/greetings";
     }
 }
