@@ -32,13 +32,14 @@ public class UserService implements UserDetailsService {
         if (userFromDB == null) {
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             user.setActivationCode(UUID.randomUUID().toString());
+            user.setEnabled(false);
             userRepository.save(user);
 
             if (!user.getEmail().isEmpty()) {
                 String message = String.format(
                         "Hello, %s! \n" +
                                 "Welcome to PhotoEditorApp." +
-                                " <a href=http://localhost:8080/users/activate/%s>" +
+                                " <a href=https://localhost:8443/users/activate/%s>" +
                                 "Please, visit next link</a>",
                         user.getUsername(),
                         user.getActivationCode()
@@ -57,6 +58,7 @@ public class UserService implements UserDetailsService {
         }
 
         user.setActivationCode(null);
+        user.setEnabled(true);
         userRepository.save(user);
         return true;
     }

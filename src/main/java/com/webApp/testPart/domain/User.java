@@ -19,6 +19,7 @@ public class User implements UserDetails, Serializable {
 
     private String email;
     private String activationCode;
+    private boolean enabled;
 
     public User(){}
 
@@ -51,7 +52,11 @@ public class User implements UserDetails, Serializable {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled){
+        this.enabled = enabled;
     }
 
     public void setUsername(String username) {

@@ -19,7 +19,6 @@ public class UserController {
 
     @GetMapping("/activate/{code}")
     public ActivateMessage activate(@PathVariable String code) {
-        int a = 1;
         if (userService.activateUser(code))
             return new ActivateMessage("User successfully activated");
         else
