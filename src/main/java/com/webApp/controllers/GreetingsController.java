@@ -1,6 +1,6 @@
-package com.webApp.testPart.controllers;
+package com.webApp.controllers;
 
-import com.webApp.testPart.json.Greetings;
+import com.webApp.json.Greetings;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

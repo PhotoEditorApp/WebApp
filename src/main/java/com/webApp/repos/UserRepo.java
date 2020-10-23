@@ -1,6 +1,6 @@
-package com.webApp.testPart.repos;
+package com.webApp.repos;
 
-import com.webApp.testPart.domain.User;
+import com.webApp.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepo extends JpaRepository<User, Long> {

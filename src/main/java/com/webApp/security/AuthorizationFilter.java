@@ -1,4 +1,4 @@
-package com.webApp.testPart.security;
+package com.webApp.security;
 
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;

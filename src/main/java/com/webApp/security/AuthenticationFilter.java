@@ -1,11 +1,11 @@
-package com.webApp.testPart.security;
+package com.webApp.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import com.webApp.testPart.domain.User;
+import com.webApp.domain.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -30,8 +30,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             throws AuthenticationException
     {
         try {
-            com.webApp.testPart.domain.User creds = new ObjectMapper().readValue(request.getInputStream(),
-                    com.webApp.testPart.domain.User.class);
+            User creds = new ObjectMapper().readValue(request.getInputStream(),
+                    User.class);
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(creds.getUsername(), creds.getPassword(),new ArrayList<>()));
         }
         catch(IOException e) {

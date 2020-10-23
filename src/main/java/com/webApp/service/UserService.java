@@ -1,7 +1,7 @@
-package com.webApp.testPart.service;
+package com.webApp.service;
 
-import com.webApp.testPart.domain.User;
-import com.webApp.testPart.repos.UserRepo;
+import com.webApp.domain.User;
+import com.webApp.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

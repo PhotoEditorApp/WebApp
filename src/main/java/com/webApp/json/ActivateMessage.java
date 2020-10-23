@@ -1,4 +1,4 @@
-package com.webApp.testPart.json;
+package com.webApp.json;
 
 public class ActivateMessage {
     private final String status;

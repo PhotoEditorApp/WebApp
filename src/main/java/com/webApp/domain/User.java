@@ -1,4 +1,4 @@
-package com.webApp.testPart.domain;
+package com.webApp.domain;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,4 +1,4 @@
-package com.webApp.testPart.security;
+package com.webApp.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

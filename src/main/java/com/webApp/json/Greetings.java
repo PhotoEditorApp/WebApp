@@ -1,4 +1,4 @@
-package com.webApp.testPart.json;
+package com.webApp.json;
 
 public class Greetings {
     private final long id;

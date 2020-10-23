@@ -1,4 +1,4 @@
-package com.webApp.testPart.config;
+package com.webApp.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

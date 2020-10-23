@@ -1,8 +1,8 @@
-package com.webApp.testPart.controllers;
+package com.webApp.controllers;
 
-import com.webApp.testPart.domain.User;
-import com.webApp.testPart.json.ActivateMessage;
-import com.webApp.testPart.service.UserService;
+import com.webApp.domain.User;
+import com.webApp.json.ActivateMessage;
+import com.webApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

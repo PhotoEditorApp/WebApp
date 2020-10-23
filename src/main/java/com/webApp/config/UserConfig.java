@@ -1,6 +1,6 @@
-package com.webApp.testPart.config;
+package com.webApp.config;
 
-import com.webApp.testPart.service.UserService;
+import com.webApp.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetailsService;
