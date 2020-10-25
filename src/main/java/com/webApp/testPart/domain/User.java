@@ -2,18 +2,29 @@ package com.webApp.testPart.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
-@Table(name = "usr")
+@Table(name = "user")
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique=true)
-    private String username;
+    private String name;
+    @Column(unique=true)
+    private String email;
+    @Column(unique=true)
     private String password;
+    private String passwordHashAlgorithm;
 
-    public User(){}
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="status_id")
+    private UserStatus userStatus;
+    private Date registrationTime;
+
+    public User() {
+    }
 
     public Long getId() {
         return id;
@@ -23,12 +34,20 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -38,4 +57,29 @@ public class User implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getPasswordHashAlgorithm() {
+        return passwordHashAlgorithm;
+    }
+
+    public void setPasswordHashAlgorithm(String passwordHashAlgorithm) {
+        this.passwordHashAlgorithm = passwordHashAlgorithm;
+    }
+
+    public UserStatus getUserStatus() {
+        return userStatus;
+    }
+
+    public void setUserStatus(UserStatus userStatus) {
+        this.userStatus = userStatus;
+    }
+
+    public Date getRegistrationTime() {
+        return registrationTime;
+    }
+
+    public void setRegistrationTime(Date registrationTime) {
+        this.registrationTime = registrationTime;
+    }
+
 }
