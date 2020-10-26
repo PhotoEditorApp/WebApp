@@ -1,6 +1,7 @@
 package com.webApp.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.webApp.json.TokenMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,13 +30,13 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                                 HttpServletResponse response)
             throws AuthenticationException
     {
-        try {
-            User creds = new ObjectMapper().readValue(request.getInputStream(),
+        try (var req = request.getInputStream()){
+            User creds = new ObjectMapper().readValue(req,
                     User.class);
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(creds.getUsername(), creds.getPassword(),new ArrayList<>()));
         }
         catch(IOException e) {
-            throw new RuntimeException("Could not read request" + e);
+            throw new RuntimeException("Could not read request " + e);
         }
     }
 
@@ -51,7 +52,10 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         response.addHeader("Authorization","Bearer " + token);
 
         try (var writer = response.getWriter()){
-            writer.write("Bearer " + token);
+            var id = ((User) authentication.getPrincipal()).getId();
+            var objectMapper = new ObjectMapper();
+            writer.write(objectMapper.writeValueAsString(new TokenMessage(id,
+                    "Bearer " + token)));
             writer.flush();
         } catch (IOException e) {
             e.printStackTrace();

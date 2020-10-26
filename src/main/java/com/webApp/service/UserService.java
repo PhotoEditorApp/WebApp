@@ -39,8 +39,7 @@ public class UserService implements UserDetailsService {
                 String message = String.format(
                         "Hello, %s! \n" +
                                 "Welcome to PhotoEditorApp." +
-                                " <a href=https://localhost:8443/users/activate/%s>" +
-                                "Please, visit next link</a>",
+                                "Follow the next link: http://localhost:8080/users/activate/%s",
                         user.getUsername(),
                         user.getActivationCode()
                 );
