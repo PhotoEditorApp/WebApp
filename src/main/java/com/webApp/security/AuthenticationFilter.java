@@ -32,7 +32,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         try {
             com.webApp.testPart.domain.User creds = new ObjectMapper().readValue(request.getInputStream(),
                     com.webApp.testPart.domain.User.class);
-            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(creds.getUsername(), creds.getPassword(),new ArrayList<>()));
+            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(creds.getName(), creds.getPassword(),new ArrayList<>()));
         }
         catch(IOException e) {
             throw new RuntimeException("Could not read request" + e);

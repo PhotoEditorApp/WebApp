@@ -1,4 +1,4 @@
-package com.webApp.testPart.domain;
+package com.webApp.domain;
 
 import org.springframework.jdbc.support.CustomSQLErrorCodesTranslation;
 
@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "confirmation_token")
+@Table(name = "email_confirmation_token")
 public class ConfirmationToken implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

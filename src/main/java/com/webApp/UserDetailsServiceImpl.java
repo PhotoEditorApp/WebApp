@@ -1,7 +1,7 @@
 package com.webApp.testPart;
 
 import com.webApp.testPart.domain.User;
-import com.webApp.testPart.repos.UserRepo;
+import com.webApp.testPart.repositories.UserAccountRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,9 +13,9 @@ import java.util.Collections;
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
-    private UserRepo userRepository;
+    private UserAccountRepository userRepository;
 
-//    public UserDetailsServiceImpl(UserRepo userRepository) {
+//    public UserDС etailsServiceImpl(UserRepo userRepository) {
 //        this.userRepository = userRepository;
 //    }
 
@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException(username);
         }
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),
+        return new org.springframework.security.core.userdetails.User(user.getName(),
                 user.getPassword(),
                 Collections.emptyList());
     }
