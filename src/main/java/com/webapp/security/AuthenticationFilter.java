@@ -6,7 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import com.webapp.domain.User;
+import com.webapp.domain.UserAccount;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -31,8 +31,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             throws AuthenticationException
     {
         try (var req = request.getInputStream()){
-            User creds = new ObjectMapper().readValue(req,
-                    User.class);
+            UserAccount creds = new ObjectMapper().readValue(req,
+                    UserAccount.class);
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(creds.getUsername(), creds.getPassword(),new ArrayList<>()));
         }
         catch(IOException e) {
@@ -45,14 +45,14 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             FilterChain filterChain,
                                             Authentication authentication) {
         String token = Jwts.builder()
-                .setSubject(((User) authentication.getPrincipal()).getUsername())
+                .setSubject(((UserAccount) authentication.getPrincipal()).getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + 864_000_000))
                 .signWith(SignatureAlgorithm.HS512, "SecretKeyToGenJWTs".getBytes())
                 .compact();
         response.addHeader("Authorization","Bearer " + token);
 
         try (var writer = response.getWriter()){
-            var id = ((User) authentication.getPrincipal()).getId();
+            var id = ((UserAccount) authentication.getPrincipal()).getId();
             var objectMapper = new ObjectMapper();
             writer.write(objectMapper.writeValueAsString(new TokenMessage(id,
                     "Bearer " + token)));

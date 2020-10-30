@@ -1,10 +1,10 @@
 package com.webapp.repositories;
 
-import com.webapp.domain.User;
+import com.webapp.domain.UserAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
-    User findByUsername(String username);
+public interface UserRepository extends JpaRepository<UserAccount, Long> {
+    UserAccount findByEmail(String email);
 
-    User findByActivationCode(String code);
+    UserAccount findByActivationCode(String code);
 }

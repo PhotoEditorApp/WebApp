@@ -1,6 +1,6 @@
 package com.webapp.config;
 
-import com.webapp.service.UserService;
+import com.webapp.service.UserAccountService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,6 +9,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public class UserConfig {
     @Bean
     public UserDetailsService userDetailsService(){
-        return new UserService();
+        return new UserAccountService();
     }
 }

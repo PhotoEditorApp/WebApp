@@ -1,8 +1,8 @@
 package com.webapp.controllers;
 
-import com.webapp.domain.User;
+import com.webapp.domain.UserAccount;
 import com.webapp.json.ActionMessage;
-import com.webapp.service.UserService;
+import com.webapp.service.UserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,23 +10,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping
 public class UserController {
     @Autowired
-    private UserService userService;
+    private UserAccountService userAccountService;
 
     @PostMapping("/users/signup")
-    public void signUp(@RequestBody User user) {
-        userService.userSignUp(user);
+    public void signUp(@RequestBody UserAccount userAccount) {
+        userAccountService.userSignUp(userAccount);
     }
 
     @GetMapping("/users/activate/{code}")
     public ActionMessage activate(@PathVariable String code) {
-        if (userService.activateUser(code))
+        if (userAccountService.activateUser(code))
             return new ActionMessage("User successfully activated");
         else
             return new ActionMessage("Activation is not successful");
     }
-
-//    @GetMapping("/login")
-//    public ActionMessage restrictGetToLogin(){
-//        return new ActionMessage("GET request to /login is forbidden");
-//    }
 }

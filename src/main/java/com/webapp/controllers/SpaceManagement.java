@@ -39,4 +39,22 @@ public class SpaceManagement {
         // Пост запрос на создание пространства по ид пользователя
         return new ActionMessage("The space has been created");
     }
+
+    @PostMapping("/delete_space")
+    public ActionMessage deleteSpace(){
+        // Post запрос нас удаление space
+        return new ActionMessage("The space has been deleted");
+    }
+
+    @GetMapping("/find_users_email")
+    public ActionMessage findUsersByEmail(){
+        // Поиск пользователей по почте
+        return new ActionMessage("List of users");
+    }
+
+    @GetMapping("/get_access_id")
+    public ActionMessage getAccessById(){
+        // Запрос на доступ Шер папки с user_id
+        return new ActionMessage("Access granted");
+    }
 }
