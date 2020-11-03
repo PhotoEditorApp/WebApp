@@ -9,24 +9,24 @@ import java.util.Date;
 public class Profile  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long user_id;
     private String firstName;
     private String lastName;
     private String fullName;
     private String email;
     private Boolean acceptTermsOfService;
     private Date timeZone;
-    private Long userId;
+    private Long id;
 
     public Profile() {
     }
 
-    public Long getId() {
-        return id;
+    public Long getUser_id() {
+        return user_id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUser_id(Long user_id) {
+        this.user_id = user_id;
     }
 
     public String getFirstName() {
@@ -78,10 +78,10 @@ public class Profile  implements Serializable {
     }
 
     public Long getUserId() {
-        return userId;
+        return id;
     }
 
     public void setUserId(Long userId) {
-        this.userId = userId;
+        this.id = id;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,6 +27,10 @@ public class UserAccountService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         // email instead of username
+        return userRepository.findByEmail(email);
+    }
+
+    public UserAccount findByEmail(String email){
         return userRepository.findByEmail(email);
     }
 
@@ -73,5 +78,9 @@ public class UserAccountService implements UserDetailsService {
         );
         userRepository.save(userAccount);
         return true;
+    }
+
+    public Optional<UserAccount> findById(Long id){
+        return userRepository.findUserAccountById(id);
     }
 }
