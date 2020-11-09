@@ -6,22 +6,36 @@ import java.util.Date;
 
 @Entity
 @Table(name="space")
+
 public class Space implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue( strategy = GenerationType.IDENTITY)
+//    @SequenceGenerator(name = "jpaSequence", sequenceName = "seq_space", allocationSize = 1)
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private UserAccount user;
+    private String name;
     private String description;
     private Date createdTime;
     private Date modifiedTime;
 
-    public Long getId() {
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Space() {}
+
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

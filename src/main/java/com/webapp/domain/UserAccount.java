@@ -105,3 +105,4 @@ public class UserAccount implements UserDetails, Serializable {
         this.registration_time = registration_time;
     }
 }
+
