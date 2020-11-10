@@ -88,7 +88,7 @@ public class SpaceController {
         return null;
 
     }
-
+    //Коммент для коммита
     @DeleteMapping("space/{id}")
     public ResponseEntity<String> deleteSpace(@PathVariable Long id){
         try {
