@@ -5,7 +5,7 @@ import com.webapp.domain.UserAccount;
 //import com.webapp.json.UserSpacesMessage;
 //import com.webapp.repositories.SpaceRepository;
 //import com.webapp.service.SpaceService;
-import com.webapp.json.SpaceJSON;
+import com.webapp.json.SpaceMessage;
 import com.webapp.json.SpacesByUserRequest;
 import com.webapp.service.SpaceService;
 import com.webapp.service.UserAccountService;
@@ -39,36 +39,32 @@ public class SpaceController {
 
     @GetMapping("/spaces/{user_id}")
     public HttpEntity<? extends Serializable> getSpacesByUserId(@PathVariable Long user_id){
-
-
-//        try{
-//            // создаём список мест
-//            ArrayList<SpaceJSON> spaces = new ArrayList<>();
-//            // проходим по полученным space и переводим их в SpaceJSON
-//            spaceService.getSpacesByUserId(user_id).forEach(space ->{
-//                SpaceJSON spaceJSON = new SpaceJSON();
-//                spaceJSON.setId(space.getId());
-//                spaceJSON.setUser_id(user_id);
-//                spaceJSON.setName(space.getName());
-//                spaceJSON.setDescription(space.getDescription());
-//                spaceJSON.setCreatedTime(space.getCreatedTime());
-//                spaceJSON.setModifiedTime(space.getModifiedTime());
-//                spaces.add(spaceJSON);
-//            });
-//            return new ResponseEntity<>(spaces, HttpStatus.OK);
-//        }
-//        catch (Exception exception){
-//            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
-//        }
-
-    return null;
+        try{
+            // создаём список мест
+            ArrayList<SpaceMessage> spaces = new ArrayList<>();
+            // проходим по полученным space и переводим их в SpaceJSON
+            spaceService.getSpacesByUserId(user_id).forEach(space ->{
+                SpaceMessage spaceMessage = new SpaceMessage();
+                spaceMessage.setId(space.getId());
+                spaceMessage.setUserId(user_id);
+                spaceMessage.setName(space.getName());
+                spaceMessage.setDescription(space.getDescription());
+                spaceMessage.setCreatedTime(space.getCreatedTime());
+                spaceMessage.setModifiedTime(space.getModifiedTime());
+                spaces.add(spaceMessage);
+            });
+            return new ResponseEntity<>(spaces, HttpStatus.OK);
+        }
+        catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
 
 
 
     @PutMapping("spaces/{user_id}")
-    public ResponseEntity<String> createSpaceByUserId(@PathVariable Long user_id, @RequestBody SpaceJSON spaceFromAndroid){
+    public ResponseEntity<String> createSpaceByUserId(@PathVariable Long user_id, @RequestBody SpaceMessage spaceFromAndroid){
         // Пост запрос на создание пространства по ид пользователя
         Optional<UserAccount> user = userAccountService.findById(user_id);
        if (user.isPresent()){
