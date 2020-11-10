@@ -3,14 +3,14 @@ package com.webapp.domain;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="space")
-
 public class Space implements Serializable {
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY)
-//    @SequenceGenerator(name = "jpaSequence", sequenceName = "seq_space", allocationSize = 1)
+    @GeneratedValue( strategy = GenerationType.AUTO)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
@@ -20,6 +20,20 @@ public class Space implements Serializable {
     private Date createdTime;
     private Date modifiedTime;
 
+    @OneToMany(mappedBy="space")
+    private Set<SpaceAccess> spaceAccesses = new HashSet<>();
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Set<SpaceAccess> getSpaceAccesses() {
+        return spaceAccesses;
+    }
+
+    public void setSpaceAccesses(Set<SpaceAccess> spaceAccesses) {
+        this.spaceAccesses = spaceAccesses;
+    }
 
     public String getName() {
         return name;

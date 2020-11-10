@@ -14,7 +14,6 @@ public class UserController {
 
     @PostMapping("/users/signup")
     public void signUp(@RequestBody UserAccount userAccount) {
-
         userAccountService.userSignUp(userAccount);
     }
 
@@ -25,6 +24,7 @@ public class UserController {
         else
             return new ActionMessage("Activation is not successful");
     }
+
 
     @GetMapping("/user/{email}")
     public UserAccount findUserByEmail(@PathVariable String email){

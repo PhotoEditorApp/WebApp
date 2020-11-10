@@ -81,6 +81,6 @@ public class UserAccountService implements UserDetailsService {
     }
 
     public Optional<UserAccount> findById(Long id){
-        return userRepository.findUserAccountById(id);
+        return userRepository.findById(id);
     }
 }

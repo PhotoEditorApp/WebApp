@@ -6,6 +6,7 @@ import com.webapp.domain.UserAccount;
 //import com.webapp.repositories.SpaceRepository;
 //import com.webapp.service.SpaceService;
 import com.webapp.json.SpaceJSON;
+import com.webapp.json.SpacesByUserRequest;
 import com.webapp.service.SpaceService;
 import com.webapp.service.UserAccountService;
 import org.springframework.http.HttpEntity;
@@ -35,31 +36,32 @@ public class SpaceController {
         this.userAccountService = userAccountService;
     }
 
+
     @GetMapping("/spaces/{user_id}")
     public HttpEntity<? extends Serializable> getSpacesByUserId(@PathVariable Long user_id){
 
 
-        try{
-            // создаём список мест
-            ArrayList<SpaceJSON> spaces = new ArrayList<>();
-            // проходим по полученным space и переводим их в SpaceJSON
-            spaceService.getSpacesByUserId(user_id).forEach(space ->{
-                SpaceJSON spaceJSON = new SpaceJSON();
-                spaceJSON.setId(space.getId());
-                spaceJSON.setUser_id(user_id);
-                spaceJSON.setName(space.getName());
-                spaceJSON.setDescription(space.getDescription());
-                spaceJSON.setCreatedTime(space.getCreatedTime());
-                spaceJSON.setModifiedTime(space.getModifiedTime());
-                spaces.add(spaceJSON);
-            });
-            return new ResponseEntity<>(spaces, HttpStatus.OK);
-        }
-        catch (Exception exception){
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
-        }
+//        try{
+//            // создаём список мест
+//            ArrayList<SpaceJSON> spaces = new ArrayList<>();
+//            // проходим по полученным space и переводим их в SpaceJSON
+//            spaceService.getSpacesByUserId(user_id).forEach(space ->{
+//                SpaceJSON spaceJSON = new SpaceJSON();
+//                spaceJSON.setId(space.getId());
+//                spaceJSON.setUser_id(user_id);
+//                spaceJSON.setName(space.getName());
+//                spaceJSON.setDescription(space.getDescription());
+//                spaceJSON.setCreatedTime(space.getCreatedTime());
+//                spaceJSON.setModifiedTime(space.getModifiedTime());
+//                spaces.add(spaceJSON);
+//            });
+//            return new ResponseEntity<>(spaces, HttpStatus.OK);
+//        }
+//        catch (Exception exception){
+//            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+//        }
 
-
+    return null;
     }
 
     @PutMapping("spaces/{user_id}")
@@ -79,6 +81,13 @@ public class SpaceController {
         else {
             return new ResponseEntity<>("Cannot find user", HttpStatus.NOT_FOUND);
        }
+    }
+
+
+    @PostMapping("/space")
+    public ResponseEntity<String> getSpacesByUserAndAccessType(@RequestBody SpacesByUserRequest spacesByUserRequest){
+        return null;
+
     }
 
     @DeleteMapping("space/{id}")
