@@ -11,4 +11,4 @@ Tiny tutorial:
 }
 - Then you need to prove your email to activate profile. You should go to email and click the link in the message.
 - You can login now! You need to send POST-request to https://localhost:8443/login with the same body.
-- Now you have a login token! 
+- Now you have a login token 
