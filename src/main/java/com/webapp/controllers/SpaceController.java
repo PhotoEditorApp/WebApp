@@ -64,6 +64,9 @@ public class SpaceController {
     return null;
     }
 
+
+
+
     @PutMapping("spaces/{user_id}")
     public ResponseEntity<String> createSpaceByUserId(@PathVariable Long user_id, @RequestBody SpaceJSON spaceFromAndroid){
         // Пост запрос на создание пространства по ид пользователя
