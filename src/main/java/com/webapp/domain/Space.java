@@ -10,22 +10,29 @@ import java.util.Set;
 @Table(name="space")
 public class Space implements Serializable {
     @Id
-    @GeneratedValue( strategy = GenerationType.AUTO)
+    @GeneratedValue( strategy = GenerationType.SEQUENCE,
+                     generator = "space_seq")
+    @SequenceGenerator(name="space_seq", sequenceName = "seq_id_space", allocationSize = 1)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="user_id")
     private UserAccount user;
     private String name;
     private String description;
+    private int color;
     private Date createdTime;
     private Date modifiedTime;
 
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
     @OneToMany(mappedBy="space")
     private Set<SpaceAccess> spaceAccesses = new HashSet<>();
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Set<SpaceAccess> getSpaceAccesses() {
         return spaceAccesses;
@@ -45,11 +52,11 @@ public class Space implements Serializable {
 
     public Space() {}
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
