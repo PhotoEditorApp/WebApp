@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:development" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </select>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="787c5bb8-a505-4c4e-a35f-8bd65ca2d5e8" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/fileChanges/last-build.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/fileContent/fileContent.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/fileContent/fileContent.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/gc.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/javaCompile/classAnalysis.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/javaCompile/javaCompile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.3/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.3/javaCompile/taskHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/vcs-1/gc.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/webapp/controllers/SpaceController.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/webapp/controllers/SpaceController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/webapp/controllers/UserController.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/webapp/controllers/UserController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/webapp/json/UserSpacesMessage$Space.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/webapp/json/UserSpacesMessage$Space.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/webapp/json/UserSpacesMessage.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/webapp/json/UserSpacesMessage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/webapp/repositories/SpaceRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/webapp/repositories/SpaceRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/webapp/service/SpaceService.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/webapp/service/SpaceService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/webapp/service/UserAccountService.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/webapp/service/UserAccountService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/.gitignore" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven3" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
+  </component>
+  <component name="ProjectId" id="1irp8JabTAunkRRxFoWgYStGMgK" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="ASKED_MARK_IGNORED_FILES_AS_EXCLUDED" value="true" />
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="DatabaseDriversLRU" value="postgresql" />
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="add_unversioned_files" value="true" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="ignore_missing_gitignore" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="database.main" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.MainConfig">
+    <configuration name="HelloWorld" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.webApp.testPart.HelloWorld" />
+      <module name="SpringBootRest.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.webApp.testPart.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MainConfig" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="SpringBootRest.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.webapp.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.webapp.MainConfig" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MainConfig" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true">
+      <module name="SpringBootRest.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.webapp.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.webapp.MainConfig" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.HelloWorld" />
+      <item itemvalue="Spring Boot.MainConfig" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.MainConfig" />
+        <item itemvalue="Application.HelloWorld" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="787c5bb8-a505-4c4e-a35f-8bd65ca2d5e8" name="Default Changelist" comment="" />
+      <created>1602675408514</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1602675408514</updated>
+      <workItem from="1602675410490" duration="14975000" />
+      <workItem from="1602767358194" duration="7182000" />
+      <workItem from="1602797785040" duration="14584000" />
+      <workItem from="1603217731320" duration="10477000" />
+      <workItem from="1603376036960" duration="14099000" />
+      <workItem from="1603473446450" duration="4824000" />
+      <workItem from="1603650049346" duration="4031000" />
+      <workItem from="1603654607253" duration="10303000" />
+      <workItem from="1603716784164" duration="4011000" />
+      <workItem from="1603795162362" duration="1211000" />
+      <workItem from="1603905350176" duration="5936000" />
+      <workItem from="1603996047424" duration="3730000" />
+      <workItem from="1604085139948" duration="7655000" />
+      <workItem from="1604254084914" duration="1641000" />
+      <workItem from="1604334108032" duration="265000" />
+      <workItem from="1604428269678" duration="2382000" />
+      <workItem from="1604495393034" duration="8088000" />
+      <workItem from="1604586353627" duration="8597000" />
+      <workItem from="1605008253772" duration="48000" />
+      <workItem from="1605186567295" duration="9168000" />
+      <workItem from="1605196409968" duration="2611000" />
+      <workItem from="1605200792030" duration="5424000" />
+      <workItem from="1605210552733" duration="112000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="development" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="620" y="288" width="187" height="240" key="#Assign_Data_Sources" timestamp="1602778311760">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="620" y="288" width="187" height="240" key="#Assign_Data_Sources/72.27.1294.741@72.27.1294.741" timestamp="1602778311760" />
+    <state x="293" y="49" width="832" height="711" key="#SSH_Configurations" timestamp="1602676278814">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="293" y="49" width="832" height="711" key="#SSH_Configurations/72.27.1294.741@72.27.1294.741" timestamp="1602676278814" />
+    <state x="141" y="58" width="1046" height="710" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1605202022945">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="141" y="58" width="1046" height="710" key="#com.intellij.execution.impl.EditConfigurationsDialog/72.27.1294.741@72.27.1294.741" timestamp="1605202022945" />
+    <state x="527" y="105" width="374" height="592" key="#com.intellij.ide.util.MemberChooser" timestamp="1603308488932">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="527" y="105" width="374" height="592" key="#com.intellij.ide.util.MemberChooser/72.27.1294.741@72.27.1294.741" timestamp="1603308488932" />
+    <state x="72" y="27" width="614" height="741" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1604090078294">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="72" y="27" width="614" height="741" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/72.27.1294.741@72.27.1294.741" timestamp="1604090078294" />
+    <state x="452" y="146" width="524" height="509" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1604085806093">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="452" y="146" width="524" height="509" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/72.27.1294.741@72.27.1294.741" timestamp="1604085806093" />
+    <state x="452" y="146" width="524" height="509" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog" timestamp="1604088318423">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="452" y="146" width="524" height="509" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog/72.27.1294.741@72.27.1294.741" timestamp="1604088318423" />
+    <state x="502" y="155" width="424" height="491" key="FileChooserDialogImpl" timestamp="1605008301362">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="502" y="155" width="424" height="491" key="FileChooserDialogImpl/72.27.1294.741@72.27.1294.741" timestamp="1605008301362" />
+    <state width="1248" height="240" key="GridCell.Tab.0.bottom" timestamp="1605200738069">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state width="1248" height="240" key="GridCell.Tab.0.bottom/72.27.1294.741@72.27.1294.741" timestamp="1605200738069" />
+    <state width="1248" height="240" key="GridCell.Tab.0.center" timestamp="1605200738068">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state width="1248" height="240" key="GridCell.Tab.0.center/72.27.1294.741@72.27.1294.741" timestamp="1605200738068" />
+    <state width="1248" height="240" key="GridCell.Tab.0.left" timestamp="1605200738068">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state width="1248" height="240" key="GridCell.Tab.0.left/72.27.1294.741@72.27.1294.741" timestamp="1605200738068" />
+    <state width="1248" height="240" key="GridCell.Tab.0.right" timestamp="1605200738069">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state width="1248" height="240" key="GridCell.Tab.0.right/72.27.1294.741@72.27.1294.741" timestamp="1605200738069" />
+    <state width="1248" height="240" key="GridCell.Tab.1.bottom" timestamp="1605200738071">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state width="1248" height="240" key="GridCell.Tab.1.bottom/72.27.1294.741@72.27.1294.741" timestamp="1605200738071" />
+    <state width="1248" height="240" key="GridCell.Tab.1.center" timestamp="1605200738070">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state width="1248" height="240" key="GridCell.Tab.1.center/72.27.1294.741@72.27.1294.741" timestamp="1605200738070" />
+    <state width="1248" height="240" key="GridCell.Tab.1.left" timestamp="1605200738070">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state width="1248" height="240" key="GridCell.Tab.1.left/72.27.1294.741@72.27.1294.741" timestamp="1605200738070" />
+    <state width="1248" height="240" key="GridCell.Tab.1.right" timestamp="1605200738071">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state width="1248" height="240" key="GridCell.Tab.1.right/72.27.1294.741@72.27.1294.741" timestamp="1605200738071" />
+    <state width="1248" height="215" key="GridCell.Tab.2.bottom" timestamp="1605196383819">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state width="1248" height="215" key="GridCell.Tab.2.bottom/72.27.1294.741@72.27.1294.741" timestamp="1605196383819" />
+    <state width="1248" height="215" key="GridCell.Tab.2.center" timestamp="1605196383819">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state width="1248" height="215" key="GridCell.Tab.2.center/72.27.1294.741@72.27.1294.741" timestamp="1605196383819" />
+    <state width="1248" height="215" key="GridCell.Tab.2.left" timestamp="1605196383818">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state width="1248" height="215" key="GridCell.Tab.2.left/72.27.1294.741@72.27.1294.741" timestamp="1605196383818" />
+    <state width="1248" height="215" key="GridCell.Tab.2.right" timestamp="1605196383819">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state width="1248" height="215" key="GridCell.Tab.2.right/72.27.1294.741@72.27.1294.741" timestamp="1605196383819" />
+    <state width="263" height="500" key="HiddenNamespacesPopup" timestamp="1605203841498">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state width="263" height="500" key="HiddenNamespacesPopup/72.27.1294.741@72.27.1294.741" timestamp="1605203841498" />
+    <state x="208" y="31" width="1022" height="737" key="SettingsEditor" timestamp="1604587599671">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="208" y="31" width="1022" height="737" key="SettingsEditor/72.27.1294.741@72.27.1294.741" timestamp="1604587599671" />
+    <state x="600" y="245" width="377" height="354" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1" timestamp="1604673316644">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="600" y="245" width="377" height="354" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1/72.27.1294.741@72.27.1294.741" timestamp="1604673316644" />
+    <state x="472" y="215" width="484" height="371" key="com.intellij.database.psi.DbRenamePsiElementProcessor.DbRenameDialog" timestamp="1604088580514">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="472" y="215" width="484" height="371" key="com.intellij.database.psi.DbRenamePsiElementProcessor.DbRenameDialog/72.27.1294.741@72.27.1294.741" timestamp="1604088580514" />
+    <state x="471" y="77" width="321" height="665" key="com.intellij.database.view.ui.AbstractDbRefactoringDialog" timestamp="1604088661094">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="471" y="77" width="321" height="665" key="com.intellij.database.view.ui.AbstractDbRefactoringDialog/72.27.1294.741@72.27.1294.741" timestamp="1604088661094" />
+    <state x="523" y="89" width="381" height="623" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1604586810966">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="523" y="89" width="381" height="623" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/72.27.1294.741@72.27.1294.741" timestamp="1604586810966" />
+    <state x="0" y="27" width="618" height="741" key="find.popup" timestamp="1603048176975">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="0" y="27" width="618" height="741" key="find.popup/72.27.1294.741@72.27.1294.741" timestamp="1603048176975" />
+    <state x="383" y="174" key="run.anything.popup" timestamp="1603309994891">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="383" y="174" key="run.anything.popup/72.27.1294.741@72.27.1294.741" timestamp="1603309994891" />
+    <state x="611" y="354" width="672" height="678" key="search.everywhere.popup" timestamp="1603401925213">
+      <screen x="72" y="27" width="1294" height="741" />
+    </state>
+    <state x="611" y="354" width="672" height="678" key="search.everywhere.popup/72.27.1294.741@72.27.1294.741" timestamp="1603401925213" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/webapp/controllers/SpaceController.java</url>
+          <line>74</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
