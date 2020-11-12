@@ -9,5 +9,9 @@ import java.util.List;
 public interface SpaceRepository extends JpaRepository<Space, Long> {
     Space findSpaceById(Long id);
     List<Space> findByUser(UserAccount userAccount);
+<<<<<<< HEAD
 
+=======
+    void deleteById(Long id);
+>>>>>>> 86d9921633c2ebad026850dde333876b5550b600
 }

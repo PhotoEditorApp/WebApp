@@ -6,6 +6,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "user_account")
@@ -21,6 +23,17 @@ public class UserAccount implements UserDetails, Serializable {
     private String activationCode;
     private boolean enabled;
     private String registration_time;
+
+    @OneToMany(mappedBy="user")
+    private Set<SpaceAccess> spaceAccesses = new HashSet<>();
+
+    public Set<SpaceAccess> getSpaceAccesses() {
+        return spaceAccesses;
+    }
+
+    public void setSpaceAccesses(Set<SpaceAccess> spaceAccesses) {
+        this.spaceAccesses = spaceAccesses;
+    }
 
     public UserAccount(){}
 
@@ -105,3 +118,4 @@ public class UserAccount implements UserDetails, Serializable {
         this.registration_time = registration_time;
     }
 }
+
