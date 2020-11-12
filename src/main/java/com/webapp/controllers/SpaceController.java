@@ -25,7 +25,7 @@ import java.util.Optional;
  */
 
 @RestController
-@RequestMapping
+@RequestMapping(name = "space")
 public class SpaceController {
 
     // по логике URL должен содержать еще id конкретного пользователя
@@ -39,7 +39,7 @@ public class SpaceController {
     }
 
 
-    @GetMapping("/space/{user_id}")
+    @GetMapping("/{user_id}")
     public HttpEntity<? extends Serializable> getSpacesByUserId(@PathVariable Long user_id){
         try{
             // создаём список мест
@@ -62,10 +62,7 @@ public class SpaceController {
         }
     }
 
-
-
-
-    @PutMapping("space/{user_id}")
+    @PutMapping("/{user_id}")
     public ResponseEntity<String> createSpaceByUserId(@PathVariable Long user_id, @RequestBody CreateSpaceRequest createSpaceRequest){
         // Пост запрос на создание пространства по ид пользователя
         Optional<UserAccount> user = userAccountService.findById(user_id);
@@ -83,8 +80,8 @@ public class SpaceController {
             return new ResponseEntity<>("Cannot find user", HttpStatus.NOT_FOUND);
        }
     }
-    //Коммент для коммита 2
-    @DeleteMapping("space/{id}")
+
+    @DeleteMapping("{id}")
     public ResponseEntity<String> deleteSpace(@PathVariable Long id){
         try {
             spaceService.deleteById(id);
