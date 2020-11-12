@@ -27,16 +27,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping
 public class SpaceController {
-    // по логике URL должен содержать еще id конкретного пользователя
-    // этот момент необходимо еще уточнить
-    @Autowired
-    SpaceService spaceService;
-    UserAccountService userAccountService;
+    final SpaceService spaceService;
+    final UserAccountService userAccountService;
 
-
-    @GetMapping("/space/{user_id}")
-    public ActionMessage getSpacesById(@PathVariable Long user_id){
-        return new ActionMessage(spaceService.getSpaceById(user_id).getUser().getEmail());
+    public SpaceController(SpaceService spaceService, UserAccountService userAccountService) {
+        this.spaceService = spaceService;
+        this.userAccountService = userAccountService;
     }
 
     @GetMapping("/spaces")

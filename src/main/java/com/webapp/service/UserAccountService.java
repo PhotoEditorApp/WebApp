@@ -66,7 +66,6 @@ public class UserAccountService implements UserDetailsService {
 
     public boolean activateUser(String code) {
         UserAccount userAccount = userRepository.findByActivationCode(code);
-
         if (userAccount == null) {
             return false;
         }

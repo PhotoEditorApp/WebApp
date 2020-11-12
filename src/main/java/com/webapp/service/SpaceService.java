@@ -4,6 +4,7 @@ import com.webapp.domain.Space;
 import com.webapp.domain.UserAccount;
 import com.webapp.repositories.SpaceRepository;
 import com.webapp.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +12,13 @@ import java.util.List;
 
 @Service
 public class SpaceService {
-    UserRepository userRepository;
-    SpaceRepository spaceRepository;
+    final UserRepository userRepository;
+    final SpaceRepository spaceRepository;
+
+    public SpaceService(UserRepository userRepository, SpaceRepository spaceRepository) {
+        this.userRepository = userRepository;
+        this.spaceRepository = spaceRepository;
+    }
 
 
     public Space getSpaceById(Long id){

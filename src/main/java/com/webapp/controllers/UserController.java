@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping
 public class UserController {
-    @Autowired
-    private UserAccountService userAccountService;
+    private final UserAccountService userAccountService;
+
+    public UserController(UserAccountService userAccountService) {
+        this.userAccountService = userAccountService;
+    }
 
     @PostMapping("/users/signup")
     public void signUp(@RequestBody UserAccount userAccount) {
