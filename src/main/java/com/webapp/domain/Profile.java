@@ -15,8 +15,6 @@ public class Profile  implements Serializable {
     private String fullName;
     private String email;
     private Boolean acceptTermsOfService;
-    private Date timeZone;
-    private Long id;
 
     public Profile() {
     }
@@ -69,19 +67,5 @@ public class Profile  implements Serializable {
         this.acceptTermsOfService = acceptTermsOfService;
     }
 
-    public Date getTimeZone() {
-        return timeZone;
-    }
 
-    public void setTimeZone(Date timeZone) {
-        this.timeZone = timeZone;
-    }
-
-    public Long getUserId() {
-        return id;
-    }
-
-    public void setUserId(Long userId) {
-        this.id = id;
-    }
 }

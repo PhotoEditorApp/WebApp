@@ -66,7 +66,6 @@ public class UserAccountService implements UserDetailsService {
 
     public boolean activateUser(String code) {
         UserAccount userAccount = userRepository.findByActivationCode(code);
-
         if (userAccount == null) {
             return false;
         }
@@ -81,6 +80,6 @@ public class UserAccountService implements UserDetailsService {
     }
 
     public Optional<UserAccount> findById(Long id){
-        return userRepository.findUserAccountById(id);
+        return userRepository.findById(id);
     }
 }

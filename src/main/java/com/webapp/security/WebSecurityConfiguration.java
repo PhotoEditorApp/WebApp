@@ -27,8 +27,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             "/swagger-ui.html",
             "/v3/api-docs/**",
             "/user",
-            "/spaces",
-            "/profile"
+//            "/spaces/*",
+//            "/profile",
+//            "/space/*",
+//            "/profile/*",
+             "/*",
+             "/*/*",
+             "/*/*/*",
+
+
     };
 
     protected void configure(HttpSecurity httpSecurity) throws Exception {

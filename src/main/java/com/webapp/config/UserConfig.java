@@ -1,5 +1,6 @@
 package com.webapp.config;
 
+import com.webapp.domain.Space;
 import com.webapp.service.UserAccountService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,4 +12,5 @@ public class UserConfig {
     public UserDetailsService userDetailsService(){
         return new UserAccountService();
     }
+
 }
