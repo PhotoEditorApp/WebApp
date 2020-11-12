@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 public class SpaceService {
-<<<<<<< HEAD
+
     final UserRepository userRepository;
     final SpaceRepository spaceRepository;
 
@@ -21,12 +21,7 @@ public class SpaceService {
         this.userRepository = userRepository;
         this.spaceRepository = spaceRepository;
     }
-=======
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    SpaceRepository spaceRepository;
->>>>>>> 86d9921633c2ebad026850dde333876b5550b600
+
 
 
     public Space getSpaceById(Long id){

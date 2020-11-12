@@ -5,6 +5,7 @@ import com.webapp.domain.UserAccount;
 //import com.webapp.json.UserSpacesMessage;
 //import com.webapp.repositories.SpaceRepository;
 //import com.webapp.service.SpaceService;
+import com.webapp.json.CreateSpaceRequest;
 import com.webapp.json.SpaceMessage;
 import com.webapp.json.SpacesByUserRequest;
 import com.webapp.service.SpaceService;
@@ -26,11 +27,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping
 public class SpaceController {
-<<<<<<< HEAD
-=======
+
     // по логике URL должен содержать еще id конкретного пользователя
-    // этот момент необходимо еще уточнить
->>>>>>> 86d9921633c2ebad026850dde333876b5550b600
+    // этот момент необходимо еще уточнит
     final SpaceService spaceService;
     final UserAccountService userAccountService;
 
@@ -40,7 +39,7 @@ public class SpaceController {
     }
 
 
-    @GetMapping("/spaces/{user_id}")
+    @GetMapping("/space/{user_id}")
     public HttpEntity<? extends Serializable> getSpacesByUserId(@PathVariable Long user_id){
         try{
             // создаём список мест
@@ -66,14 +65,14 @@ public class SpaceController {
 
 
 
-    @PutMapping("spaces/{user_id}")
-    public ResponseEntity<String> createSpaceByUserId(@PathVariable Long user_id, @RequestBody SpaceMessage spaceFromAndroid){
+    @PutMapping("space/{user_id}")
+    public ResponseEntity<String> createSpaceByUserId(@PathVariable Long user_id, @RequestBody CreateSpaceRequest createSpaceRequest){
         // Пост запрос на создание пространства по ид пользователя
         Optional<UserAccount> user = userAccountService.findById(user_id);
        if (user.isPresent()){
             Space space = new Space();
-            space.setName(spaceFromAndroid.getName());
-            space.setDescription(spaceFromAndroid.getDescription());
+            space.setName(createSpaceRequest.getName());
+            space.setDescription(createSpaceRequest.getDescription());
             space.setUser(user.get());
             space.setCreatedTime(new Date());
             space.setModifiedTime(new Date());
@@ -83,13 +82,6 @@ public class SpaceController {
         else {
             return new ResponseEntity<>("Cannot find user", HttpStatus.NOT_FOUND);
        }
-    }
-
-
-    @PostMapping("/space")
-    public ResponseEntity<String> getSpacesByUserAndAccessType(@RequestBody SpacesByUserRequest spacesByUserRequest){
-        return null;
-
     }
     //Коммент для коммита 2
     @DeleteMapping("space/{id}")
