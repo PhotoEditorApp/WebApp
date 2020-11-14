@@ -9,12 +9,24 @@ import java.util.Date;
 public class SpaceMessage implements Serializable{
     private Long id;
     private Long userId;
+    private int color;
+
+
+
     private String name;
     private String description;
     private Date createdTime;
     private Date modifiedTime;
     // цвет
     //    private int co
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
 
 
     public Long getId() {

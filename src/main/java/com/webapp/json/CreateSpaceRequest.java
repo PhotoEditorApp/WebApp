@@ -14,10 +14,12 @@ public class CreateSpaceRequest implements Serializable {
 
     private String name;
     private String description;
+    private int color;
 
-    public CreateSpaceRequest(String name, String description) {
+    public CreateSpaceRequest(String name, String description, int color) {
         this.name = name;
         this.description = description;
+        this.color = color;
     }
 
     public String getName() {
@@ -35,4 +37,13 @@ public class CreateSpaceRequest implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
 }

@@ -25,7 +25,7 @@ import java.util.Optional;
  */
 
 @RestController
-@RequestMapping(name = "space")
+@RequestMapping("/space")
 public class SpaceController {
 
     // по логике URL должен содержать еще id конкретного пользователя
@@ -47,6 +47,7 @@ public class SpaceController {
             // проходим по полученным space и переводим их в SpaceJSON
             spaceService.getSpacesByUserId(user_id).forEach(space ->{
                 SpaceMessage spaceMessage = new SpaceMessage();
+                spaceMessage.setColor(space.getColor());
                 spaceMessage.setId(space.getId());
                 spaceMessage.setUserId(user_id);
                 spaceMessage.setName(space.getName());
@@ -71,6 +72,7 @@ public class SpaceController {
             space.setName(createSpaceRequest.getName());
             space.setDescription(createSpaceRequest.getDescription());
             space.setUser(user.get());
+            space.setColor(createSpaceRequest.getColor());
             space.setCreatedTime(new Date());
             space.setModifiedTime(new Date());
             spaceService.save(space);
