@@ -5,9 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "user_account")
@@ -23,6 +21,10 @@ public class UserAccount implements UserDetails, Serializable {
     private String activationCode;
     private boolean enabled;
     private String registration_time;
+
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
 
     @OneToMany(mappedBy="user")
     private Set<SpaceAccess> spaceAccesses = new HashSet<>();
@@ -75,7 +77,7 @@ public class UserAccount implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return new ArrayList<GrantedAuthority>();
     }
 
     public String getPassword() {

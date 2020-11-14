@@ -55,7 +55,7 @@ public class UserAccountService implements UserDetailsService {
                                 "Follow the <a href=http://localhost:8080/users/activate/%s>" +
                                 "link" +
                                 "</a>.",
-                        userAccount.getUsername(),
+                        userAccount.getEmail(),
                         userAccount.getActivationCode()
                 );
 

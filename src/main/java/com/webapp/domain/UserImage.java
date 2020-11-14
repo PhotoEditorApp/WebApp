@@ -1,6 +1,7 @@
 package com.webapp.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -8,21 +9,34 @@ import java.util.Date;
 @Table(name="image")
 public class UserImage implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id")
     private UserAccount user;
-    // может быть другой тип данных?
     private String path;
-    private Long spaceId;
+
     private Date createTime;
     private Long size;
     private Date modifiedTime;
     private Long averageColorId;
 
     public UserImage() {
+    }
+
+    public UserImage(UserAccount user, String path,
+                     Date createTime, Date modifiedTime,
+                     Long size, Long averageColorId,
+                     String name){
+        this.user = user;
+        this.averageColorId = averageColorId;
+        this.createTime = createTime;
+        this.modifiedTime = modifiedTime;
+        this.name = name;
+        this.path = path;
+        this.size = size;
     }
 
     public Long getId() {
@@ -55,14 +69,6 @@ public class UserImage implements Serializable {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public Long getSpaceId() {
-        return spaceId;
-    }
-
-    public void setSpaceId(Long spaceId) {
-        this.spaceId = spaceId;
     }
 
     public Date getCreateTime() {

@@ -51,4 +51,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui
     compile group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.4.8'
 
+    compile fileTree('libs')
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:2.3.4.RELEASE"
 }

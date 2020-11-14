@@ -21,21 +21,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
     private static final String[] AUTH_WHITELIST = {
-        "/greetings/*",
             "/users/activate/*",
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/v3/api-docs/**",
-            "/user",
-//            "/spaces/*",
-//            "/profile",
-//            "/space/*",
-//            "/profile/*",
-             "/*",
-             "/*/*",
-             "/*/*/*",
-
-
+            "/users/signup",
+            "/images/upload_image",
+            "/images/get_image_id"
     };
 
     protected void configure(HttpSecurity httpSecurity) throws Exception {

@@ -33,7 +33,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         try (var req = request.getInputStream()){
             UserAccount creds = new ObjectMapper().readValue(req,
                     UserAccount.class);
-            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(creds.getUsername(), creds.getPassword(),new ArrayList<>()));
+            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(creds.getEmail(), creds.getPassword(),new ArrayList<>()));
         }
         catch(IOException e) {
             throw new RuntimeException("Could not read request " + e);
@@ -45,7 +45,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             FilterChain filterChain,
                                             Authentication authentication) {
         String token = Jwts.builder()
-                .setSubject(((UserAccount) authentication.getPrincipal()).getUsername())
+                .setSubject(((UserAccount) authentication.getPrincipal()).getEmail())
                 .setExpiration(new Date(System.currentTimeMillis() + 864_000_000))
                 .signWith(SignatureAlgorithm.HS512, "SecretKeyToGenJWTs".getBytes())
                 .compact();
