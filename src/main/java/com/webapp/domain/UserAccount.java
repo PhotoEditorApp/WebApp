@@ -1,15 +1,13 @@
 package com.webapp.domain;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "user_account")
-public class UserAccount implements UserDetails, Serializable {
+public class UserAccount implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -21,10 +19,6 @@ public class UserAccount implements UserDetails, Serializable {
     private String activationCode;
     private boolean enabled;
     private String registration_time;
-
-    private boolean accountNonExpired;
-    private boolean accountNonLocked;
-    private boolean credentialsNonExpired;
 
     @OneToMany(mappedBy="user")
     private Set<SpaceAccess> spaceAccesses = new HashSet<>();
@@ -47,37 +41,12 @@ public class UserAccount implements UserDetails, Serializable {
         this.id = id;
     }
 
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
     public void setEnabled(boolean enabled){
         this.enabled = enabled;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new ArrayList<GrantedAuthority>();
     }
 
     public String getPassword() {

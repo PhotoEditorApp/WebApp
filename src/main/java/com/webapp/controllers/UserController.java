@@ -28,10 +28,8 @@ public class UserController {
             return new ActionMessage("Activation is not successful");
     }
 
-
     @GetMapping("/user/{email}")
     public UserAccount findUserByEmail(@PathVariable String email){
-        // Поиск пользователя по почтe
         return userAccountService.findByEmail(email);
     }
 

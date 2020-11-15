@@ -1,6 +1,7 @@
 package com.webapp.service;
 
 import com.webapp.domain.UserAccount;
+import com.webapp.domain.UserAccountSecurity;
 import com.webapp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,8 +27,7 @@ public class UserAccountService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        // email instead of username
-        return userRepository.findByEmail(email);
+        return new UserAccountSecurity(userRepository.findByEmail(email));
     }
 
     public UserAccount findByEmail(String email){

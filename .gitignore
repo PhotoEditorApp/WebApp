@@ -28,3 +28,5 @@ hs_err_pid*
 /.gradle/
 /build/
 /gradle/
+!/libs/
+!/libs/opencv-4.3.0-2.jar

@@ -1,7 +1,9 @@
 package com.webapp.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.webapp.domain.UserAccountSecurity;
 import com.webapp.json.TokenMessage;
+import com.webapp.service.UserAccountService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,7 +35,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         try (var req = request.getInputStream()){
             UserAccount creds = new ObjectMapper().readValue(req,
                     UserAccount.class);
-            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(creds.getEmail(), creds.getPassword(),new ArrayList<>()));
+            return authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(creds.getEmail(), creds.getPassword(),new ArrayList<>()));
         }
         catch(IOException e) {
             throw new RuntimeException("Could not read request " + e);
@@ -45,14 +48,14 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             FilterChain filterChain,
                                             Authentication authentication) {
         String token = Jwts.builder()
-                .setSubject(((UserAccount) authentication.getPrincipal()).getEmail())
+                .setSubject(((UserAccountSecurity) authentication.getPrincipal()).getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + 864_000_000))
                 .signWith(SignatureAlgorithm.HS512, "SecretKeyToGenJWTs".getBytes())
                 .compact();
         response.addHeader("Authorization","Bearer " + token);
 
         try (var writer = response.getWriter()){
-            var id = ((UserAccount) authentication.getPrincipal()).getId();
+            var id = ((UserAccountSecurity) authentication.getPrincipal()).getId();
             var objectMapper = new ObjectMapper();
             writer.write(objectMapper.writeValueAsString(new TokenMessage(id,
                     "Bearer " + token)));
