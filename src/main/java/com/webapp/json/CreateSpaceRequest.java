@@ -15,7 +15,17 @@ public class CreateSpaceRequest implements Serializable {
     private String name;
     private String description;
 
-    public CreateSpaceRequest(String name, String description) {
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    private int color;
+
+    public CreateSpaceRequest(String name, String description, int color) {
         this.name = name;
         this.description = description;
     }

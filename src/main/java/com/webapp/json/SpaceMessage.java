@@ -13,6 +13,15 @@ public class SpaceMessage implements Serializable{
     private String description;
     private Date createdTime;
     private Date modifiedTime;
+    private int color;
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
     // цвет
     //    private int co
 

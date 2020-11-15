@@ -25,7 +25,7 @@ import java.util.Optional;
  */
 
 @RestController
-@RequestMapping(name = "space")
+@RequestMapping("/space")
 public class SpaceController {
 
     // по логике URL должен содержать еще id конкретного пользователя
