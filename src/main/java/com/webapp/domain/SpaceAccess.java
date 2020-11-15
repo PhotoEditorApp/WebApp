@@ -4,8 +4,7 @@ import javax.persistence.*;
 import com.webapp.compositeKeys.SpaceAccessId;
 import com.webapp.enums.AccessType;
 import java.io.Serializable;
-
-
+import java.util.Objects;
 
 
 @Entity
@@ -64,4 +63,19 @@ public class SpaceAccess implements Serializable {
         this.space = space;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SpaceAccess that = (SpaceAccess) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(user, that.user) &&
+                Objects.equals(space, that.space) &&
+                type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, user, space, type);
+    }
 }

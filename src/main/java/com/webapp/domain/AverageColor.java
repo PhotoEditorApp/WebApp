@@ -2,6 +2,7 @@ package com.webapp.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "average_color")
@@ -39,5 +40,20 @@ public class AverageColor implements Serializable {
 
     public void setRgb(String rgb) {
         this.rgb = rgb;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AverageColor that = (AverageColor) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(rgb, that.rgb);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, rgb);
     }
 }
