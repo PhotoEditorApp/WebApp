@@ -8,7 +8,6 @@ import java.util.Date;
 @Table(name="profile")
 public class Profile  implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_id;
     private String firstName;
     private String lastName;
@@ -17,6 +16,11 @@ public class Profile  implements Serializable {
     private Boolean acceptTermsOfService;
 
     public Profile() {
+    }
+
+    public Profile(UserAccount user){
+        this.user_id = user.getId();
+        this.email = user.getEmail();
     }
 
     public Long getUser_id() {

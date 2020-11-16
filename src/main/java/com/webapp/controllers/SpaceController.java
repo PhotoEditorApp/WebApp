@@ -8,7 +8,6 @@ import com.webapp.domain.UserAccount;
 import com.webapp.enums.AccessType;
 import com.webapp.json.CreateSpaceRequest;
 import com.webapp.json.SpaceMessage;
-import com.webapp.json.SpacesByUserRequest;
 import com.webapp.service.SpaceService;
 import com.webapp.service.UserAccountService;
 import org.springframework.http.HttpEntity;
@@ -20,7 +19,6 @@ import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -39,9 +37,9 @@ public class SpaceController {
         this.userAccountService = userAccountService;
     }
 
-    // get all spaces of user by params
-    @GetMapping("/{user_id}")
-    public HttpEntity<? extends Serializable> getSpacesByUserId(@PathVariable Long user_id,
+    // get all available spaces of user by params
+    @GetMapping
+    public HttpEntity<? extends Serializable> getSpacesByUserId(@RequestParam Long user_id,
                                                                 @RequestParam(required = false) Optional<AccessType> type){
         try{
             // form spaces, which convert to json response
@@ -65,6 +63,25 @@ public class SpaceController {
         }
     }
 
+    // get space by id
+    @GetMapping("{id}")
+    public HttpEntity<? extends Serializable> getSpace(@PathVariable Long id){
+        try {
+            Space space = spaceService.getById(id);
+            SpaceMessage spaceMessage = new SpaceMessage();
+            spaceMessage.setId(space.getId());
+            spaceMessage.setUserId(space.getUser().getId());
+            spaceMessage.setName(space.getName());
+            spaceMessage.setDescription(space.getDescription());
+            spaceMessage.setCreatedTime(space.getCreatedTime());
+            spaceMessage.setModifiedTime(space.getModifiedTime());
+            return new ResponseEntity(spaceMessage, HttpStatus.OK);
+
+        }
+        catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
 
     // create new space by user_id

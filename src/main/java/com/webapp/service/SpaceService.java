@@ -23,10 +23,15 @@ public class SpaceService {
         this.spaceAccessService = spaceAccessService;
     }
 
-
-
-    public Space getSpaceById(Long id){
-        return spaceRepository.findSpaceById(id);
+    // get space by id
+    public Space getById(Long id) throws Exception {
+        Optional<Space> space = spaceRepository.findById(id);
+        if (space.isPresent()){
+            return space.get();
+        }
+        else{
+            throw new Exception("cannot find space");
+        }
     }
 
     // ищем spaces у пользователя. Кидаем исключение, если нет такого id.

@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 @RestController
-@RequestMapping
+@RequestMapping("/profile")
 public class ProfileController {
     final ProfileService profileService;
 
@@ -21,10 +21,11 @@ public class ProfileController {
         this.profileService = profileService;
     }
 
-    @GetMapping("profile/{user_id}")
-    public ResponseEntity<? extends Serializable> getProfileByUserId(@PathVariable Long user_id){
+    // get profile by id
+    @GetMapping("{id}")
+    public ResponseEntity<? extends Serializable> getProfileByUserId(@PathVariable Long id){
 
-        Optional<Profile> profile = profileService.findById(user_id);
+        Optional<Profile> profile = profileService.findById(id);
 
         if (profile.isPresent()){
             ProfileMessage profileMessage = new ProfileMessage();
@@ -41,7 +42,8 @@ public class ProfileController {
         }
     }
 
-    @PutMapping("profile/{user_id}")
+    // update profile by user id
+    @PutMapping("{user_id}")
     public ResponseEntity<? extends Serializable> getProfileByUserId(@PathVariable Long user_id, @RequestBody ProfileRequestMessage profileRequestMessage) {
         Optional<Profile> profile = profileService.findById(user_id);
         if (profile.isPresent()){
@@ -57,5 +59,15 @@ public class ProfileController {
 
     }
 
-
+    // get profile by email
+    @GetMapping
+    ResponseEntity<? extends Serializable> getProfileByEmail(@RequestParam String email){
+        Optional<Profile> profile = profileService.findByEmail(email);
+        if (profile.isPresent()){
+            return new ResponseEntity<>(profile.get(), HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

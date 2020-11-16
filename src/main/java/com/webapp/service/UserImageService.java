@@ -192,18 +192,19 @@ public class UserImageService implements StorageService {
     }
 
     public String concatenateImages(List<UserImage> userImageList){
-        Mat collage = new Mat();
-        Core.hconcat(userImageList.stream()
-                .map(img -> Imgcodecs.imread(img.getPath()))
-                .collect(Collectors.toList()), collage);
-
-        String path =
-                "collage" + userImageList.stream()
-                .map(userImage -> userImage.getId().toString())
-                .reduce(String::concat);
-
-        Imgcodecs.imwrite(rootLocation.resolve(path).toString(), collage);
-
-        return path;
+//        Mat collage = new Mat();
+//        Core.hconcat(userImageList.stream()
+//                .map(img -> Imgcodecs.imread(img.getPath()))
+//                .collect(Collectors.toList()), collage);
+//
+//        String path =
+//                "collage" + userImageList.stream()
+//                .map(userImage -> userImage.getId().toString())
+//                .reduce(String::concat);
+//
+//        Imgcodecs.imwrite(rootLocation.resolve(path).toString(), collage);
+//
+//        return path;
+        return null;
     }
 }
