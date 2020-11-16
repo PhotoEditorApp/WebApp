@@ -43,11 +43,6 @@ public class SpaceAccessService {
         user.orElseThrow(() -> new Exception("cannot find user"));
         // нет такого space
         space.orElseThrow(() -> new Exception("cannot find space"));
-        // пытаемся установить Creator type
-        // creator type устанавливается только при создании папки
-        if (accessType == AccessType.CREATOR){
-            throw new Exception("cannot set CREATOR type by this request");
-        }
 
         // ищем в SpaceAccess, иначе создаём свою
         SpaceAccess spaceAccess = spaceAccessRepository
@@ -61,6 +56,10 @@ public class SpaceAccessService {
 
         spaceAccess.setType(accessType);
         spaceAccessRepository.save(spaceAccess);
+    }
+
+    public void delete(SpaceAccess spaceAccess){
+        spaceAccessRepository.delete(spaceAccess);
     }
 
     public SpaceAccessRepository getSpaceAccessRepository() {
