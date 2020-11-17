@@ -83,6 +83,18 @@ public class SpaceController {
         }
     }
 
+    // get all users, which are connected with space
+    @GetMapping("/user")
+    public HttpEntity<? extends Serializable> getUsersBySpace(@RequestParam Long space_id){
+        try {
+            return new ResponseEntity<>(userAccountService.getUsersBySpaceId(space_id), HttpStatus.OK);
+        }
+        catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 
     // create new space by user_id
     @PutMapping("/{user_id}")

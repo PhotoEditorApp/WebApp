@@ -45,7 +45,7 @@ public class UserController {
 
     // get user by email
     @GetMapping
-    public HttpEntity<? extends Serializable> findUserByEmail(@RequestParam String email){
+    public HttpEntity<? extends Serializable> findUserByEmail(@RequestParam(name="email") String email){
         Optional<UserAccount> user = userAccountService.findByEmail(email);
         if (user.isPresent()){
            return new ResponseEntity<>(new UserAccountResponseMessage(user.get()), HttpStatus.OK);
@@ -55,19 +55,9 @@ public class UserController {
         }
     }
 
-    // get all users, which are connected with space
-    @GetMapping("/get_all_by_space")
-    public HttpEntity<? extends Serializable> getUsersBySpace(@RequestParam Long space_id){
-        try {
-            return new ResponseEntity<>(userAccountService.getUsersBySpaceId(space_id), HttpStatus.OK);
-        }
-        catch (Exception exception){
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
 
     // get user by id
-    @GetMapping("/get_by_id/{id}")
+    @GetMapping("{id}")
     public HttpEntity<? extends Serializable> getUserAccountById(@PathVariable Long id){
         try {
             UserAccount userAccount = userAccountService.findById(id)
