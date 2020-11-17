@@ -37,12 +37,12 @@ public class SpaceService {
     // ищем spaces у пользователя. Кидаем исключение, если нет такого id.
     public List<Space> getSpacesByUserId(Long id, Optional<AccessType> type) throws Exception {
         UserAccount userAccount = userRepository.findById(id).orElseThrow(()-> new Exception("Cannot find user"));
-        if (type.isPresent()) {
-            return spaceRepository.findByUser(userAccount.getId(), type.get());
-        }
-        else{
-            return spaceRepository.findByUser(userAccount.getId());
-        }
+//        if (type.isPresent()) {
+//            return spaceRepository.findByUser(userAccount.getId(), type.get());
+//        }
+//        else{
+            return spaceRepository.findByUser(userAccount);
+//        }
     }
 
     public void save(Space space){

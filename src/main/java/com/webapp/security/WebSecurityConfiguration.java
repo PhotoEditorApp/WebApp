@@ -21,18 +21,19 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
     private static final String[] AUTH_WHITELIST = {
-            "/users/activate/*",
+            "/user/activate/*",
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/v3/api-docs/**",
             "/images/upload_image",
-            "/images/get_image_id"
+            "/images/get_image_id",
+            "/images/get_collage"
     };
 
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors().and().csrf().disable().authorizeRequests()
         .antMatchers(AUTH_WHITELIST).permitAll()
-        .antMatchers(HttpMethod.POST, "/users/signup").permitAll()
+        .antMatchers(HttpMethod.POST, "/user/signup").permitAll()
         .anyRequest().authenticated()
         .and().addFilter(new AuthenticationFilter(authenticationManager()))
         .addFilter(new AuthorizationFilter(authenticationManager()))

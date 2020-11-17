@@ -28,14 +28,14 @@ public class UserController {
     public ResponseEntity<String> signUp(@RequestParam String email, @RequestParam String password) {
         try {;
             userAccountService.userSignUp(email, password);
-            return new ResponseEntity<>("user successfully signed up", HttpStatus.OK);
+            return new ResponseEntity<>("user successfully signed up but not activated", HttpStatus.OK);
         }
         catch(Exception exception){
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping("activate/{code}")
+    @GetMapping("/activate/{code}")
     public ActionMessage activate(@PathVariable String code) {
         if (userAccountService.activateUser(code))
             return new ActionMessage("User successfully activated");
@@ -56,21 +56,23 @@ public class UserController {
     }
 
     // get all users, which are connected with space
-//    @GetMapping
-//    public HttpEntity<? extends Serializable> getUsersBySpace(@RequestParam Long space_id){
-//        try {
-//            return new ResponseEntity<>(userAccountService.getUsersBySpaceId(space_id), HttpStatus.OK);
-//        }
-//        catch (Exception exception){
-//            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
-//        }
-//    }
+    @GetMapping("/get_all_by_space")
+    public HttpEntity<? extends Serializable> getUsersBySpace(@RequestParam Long space_id){
+        try {
+            return new ResponseEntity<>(userAccountService.getUsersBySpaceId(space_id), HttpStatus.OK);
+        }
+        catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
     // get user by id
-    @GetMapping("{id}")
+    @GetMapping("/get_by_id/{id}")
     public HttpEntity<? extends Serializable> getUserAccountById(@PathVariable Long id){
         try {
-            return new ResponseEntity<>(userAccountService.findById(id).get(), HttpStatus.OK);
+            UserAccount userAccount = userAccountService.findById(id)
+                    .orElseThrow(() -> new Exception("No such account: id = " + id.toString()));
+            return new ResponseEntity<>(userAccount, HttpStatus.OK);
         }
         catch (Exception exception){
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);

@@ -18,6 +18,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -191,7 +194,7 @@ public class UserImageService implements StorageService {
         userImageRepository.save(userImage);
     }
 
-    public String concatenateImages(List<UserImage> userImageList){
+//    public String concatenateImages(List<UserImage> userImageList){
 //        Mat collage = new Mat();
 //        Core.hconcat(userImageList.stream()
 //                .map(img -> Imgcodecs.imread(img.getPath()))
@@ -205,6 +208,29 @@ public class UserImageService implements StorageService {
 //        Imgcodecs.imwrite(rootLocation.resolve(path).toString(), collage);
 //
 //        return path;
-        return null;
+//    }
+
+    public String concatenateImages(List<UserImage> userImageList) throws StorageException{
+        // do not use this method until it won't be ready
+        // todo make a collage properly
+        List<BufferedImage> bufferedImages =
+        userImageList.stream()
+                .map(img -> {
+                    try {
+                        return Optional.ofNullable(ImageIO.read(new File(img.getPath())))
+                                .orElseThrow(() -> new StorageException("No such file " + img.getName()));
+                    } catch (IOException e) {
+                        throw new StorageException(e.getMessage());
+                    }
+                })
+                .collect(Collectors.toList());
+
+        var sortedByMaxH = bufferedImages.stream()
+                .sorted((v1, v2) -> Integer.compare(v2.getHeight(), v1.getHeight()))
+                .collect(Collectors.toList());
+
+        sortedByMaxH.forEach(System.out::println);
+
+        return new String("");
     }
 }

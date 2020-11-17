@@ -39,7 +39,8 @@ public class UserAccountService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return new UserAccountSecurity(userRepository.findByEmail(email).get());
+        return new UserAccountSecurity(userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User is not found")));
     }
 
     // finding user by email
@@ -49,8 +50,7 @@ public class UserAccountService implements UserDetailsService {
 
     // sign up user by email and password
     public void userSignUp(String email, String password) throws Exception {
-
-        if (!userRepository.existsByEmail(email)) {
+        if (userRepository.findByEmail(email).isEmpty()) {
             UserAccount user = new UserAccount();
             user.setEmail(email);
             user.setPassword(bCryptPasswordEncoder.encode(password));
@@ -78,10 +78,7 @@ public class UserAccountService implements UserDetailsService {
 
                 mailSender.send(user.getEmail(), "Activation code", message);
             }
-        }
-        else{
-            throw new Exception("user with this email already exists");
-        }
+        }else throw new Exception("The user already exists");
     }
 
     public boolean activateUser(String code) {
