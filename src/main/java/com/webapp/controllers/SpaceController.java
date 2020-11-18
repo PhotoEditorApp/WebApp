@@ -48,6 +48,7 @@ public class SpaceController {
                 SpaceMessage spaceMessage = new SpaceMessage();
                 spaceMessage.setId(space.getId());
                 spaceMessage.setUserId(space.getUser().getId());
+                spaceMessage.setColor(space.getColor());
                 spaceMessage.setName(space.getName());
                 spaceMessage.setDescription(space.getDescription());
                 spaceMessage.setCreatedTime(space.getCreatedTime());
@@ -70,6 +71,7 @@ public class SpaceController {
             Space space = spaceService.getById(id);
             SpaceMessage spaceMessage = new SpaceMessage();
             spaceMessage.setId(space.getId());
+            spaceMessage.setColor(space.getColor());
             spaceMessage.setUserId(space.getUser().getId());
             spaceMessage.setName(space.getName());
             spaceMessage.setDescription(space.getDescription());
@@ -103,6 +105,7 @@ public class SpaceController {
         if (user.isPresent()){
              Space space = new Space();
              space.setName(createSpaceRequest.getName());
+             space.setColor(createSpaceRequest.getColor());
              space.setDescription(createSpaceRequest.getDescription());
              space.setUser(user.get());
              space.setCreatedTime(new Date());

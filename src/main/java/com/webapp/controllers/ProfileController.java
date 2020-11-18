@@ -31,7 +31,7 @@ public class ProfileController {
             ProfileMessage profileMessage = new ProfileMessage();
             profileMessage.setUser_id(profile.get().getUser_id());
             profileMessage.setEmail(profile.get().getEmail());
-            profileMessage.setFirstName(profile.get().getFullName());
+            profileMessage.setFirstName(profile.get().getFirstName());
             profileMessage.setLastName(profile.get().getLastName());
             profileMessage.setFullName(profile.get().getFullName());
             profileMessage.setAcceptTermsOfService(profile.get().getAcceptTermsOfService());
