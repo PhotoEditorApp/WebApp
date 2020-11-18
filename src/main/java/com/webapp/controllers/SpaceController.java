@@ -38,7 +38,7 @@ public class SpaceController {
     }
 
     // get all available spaces of user by params
-    @GetMapping
+    @GetMapping("/my_spaces")
     public HttpEntity<? extends Serializable> getSpacesByUserId(@RequestParam Long user_id,
                                                                 @RequestParam(required = false) Optional<AccessType> type){
         try{
