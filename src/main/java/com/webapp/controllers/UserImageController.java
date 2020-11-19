@@ -9,6 +9,7 @@ import com.webapp.exceptions.StorageException;
 import com.webapp.json.ActionMessage;
 import com.webapp.json.FileResponse;
 import com.webapp.service.StorageService;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
+@RequestMapping("/image")
 public class UserImageController {
 
     private final StorageService storageService;
@@ -29,42 +34,57 @@ public class UserImageController {
         this.storageService = storageService;
     }
 
-    @GetMapping("/images/get_image_name")
-    public ResponseEntity<Resource> getImageByName(@RequestParam String filename) {
-        Resource resource = storageService.loadAsResource(filename);
+    @GetMapping("/get_image_path")
+    public ResponseEntity<?> getImageByPath(@RequestParam String path) {
+        Resource resource = storageService.loadAsResource(Paths.get(path).getFileName().toString());
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+        try {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(Files.readAllBytes(Paths.get(resource.getURI().getPath())));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
     }
 
-    @GetMapping("/images/get_image_id")
-    public ResponseEntity<Resource> getImageById(@RequestParam Long id){
+    @GetMapping("/get_image_id")
+    public ResponseEntity<?> getImageById(@RequestParam Long id){
         Resource resource = storageService.getResource(id);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+        try {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(Files.readAllBytes(Paths.get(resource.getURI().getPath())));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
     }
 
-    @GetMapping("/images/get_collage")
+    @GetMapping("/get_collage")
     public ResponseEntity<?> getCollage(@RequestParam("ids") List<Long> ids){
         if (!ids.isEmpty()){
             Resource resource = storageService.getCollage(ids);
 
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
+            try {
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION,
+                                "attachment; filename=\"" + resource.getFilename() + "\"")
+                        .body(Files.readAllBytes(Paths.get(resource.getURI().getPath())));
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ActionMessage(e.getMessage()));
+            }
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ActionMessage("There's no id to make collage"));
+                .body(new ActionMessage("There's no id to make a collage"));
     }
 
-    @DeleteMapping("/image/delete_image")
+    @DeleteMapping("/delete_image")
     public ResponseEntity<ActionMessage> deleteImageById(@RequestParam Long id){
         try {
             storageService.deleteImage(id);
@@ -77,7 +97,7 @@ public class UserImageController {
                 .body(new ActionMessage("The image was deleted"));
     }
 
-    @PutMapping("/image/edit_info")
+    @PutMapping("/edit_info")
     public ResponseEntity<ActionMessage> editImageInfo(@RequestBody UserImage userImage){
         try {
             storageService.editInfo(userImage);
@@ -90,7 +110,7 @@ public class UserImageController {
                 .body(new ActionMessage("Image information has been successfully edited"));
     }
 
-    @PostMapping("/images/upload_image")
+    @PostMapping("/upload_image")
     public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file,
                                     @RequestParam("info") String userImageString) {
         String name = storageService.store(file);
