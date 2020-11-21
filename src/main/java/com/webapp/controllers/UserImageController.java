@@ -1,7 +1,6 @@
 package com.webapp.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webapp.domain.UserImage;
 import com.webapp.exceptions.FileNotFoundException;
@@ -9,7 +8,6 @@ import com.webapp.exceptions.StorageException;
 import com.webapp.json.ActionMessage;
 import com.webapp.json.FileResponse;
 import com.webapp.service.StorageService;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

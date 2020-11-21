@@ -8,14 +8,16 @@ import java.util.Objects;
 @Table(name = "average_color")
 public class AverageColor implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Id
-    private String name;
-    @Id
-    private String rgb;
+
+    private int rgb;
 
     public AverageColor() {
+    }
+
+    public AverageColor(int rgb) {
+        this.rgb = rgb;
     }
 
     public Long getId() {
@@ -26,19 +28,11 @@ public class AverageColor implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getRgb() {
+    public int getRgb() {
         return rgb;
     }
 
-    public void setRgb(String rgb) {
+    public void setRgb(int rgb) {
         this.rgb = rgb;
     }
 
@@ -47,13 +41,12 @@ public class AverageColor implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AverageColor that = (AverageColor) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(rgb, that.rgb);
+        return rgb == that.rgb &&
+                id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, rgb);
+        return Objects.hash(id, rgb);
     }
 }

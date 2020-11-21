@@ -21,14 +21,17 @@ public class UserImage implements Serializable {
     private Date createTime;
     private Long size;
     private Date modifiedTime;
-    private Long averageColorId;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name="av_color_id")
+    private AverageColor averageColorId;
 
     public UserImage() {
     }
 
     public UserImage(UserAccount user, String path,
                      Date createTime, Date modifiedTime,
-                     Long size, Long averageColorId,
+                     Long size, AverageColor averageColorId,
                      String name){
         this.user = user;
         this.averageColorId = averageColorId;
@@ -95,11 +98,11 @@ public class UserImage implements Serializable {
         this.modifiedTime = modifiedTime;
     }
 
-    public Long getAverageColorId() {
+    public AverageColor getAverageColorId() {
         return averageColorId;
     }
 
-    public void setAverageColorId(Long averageColorId) {
+    public void setAverageColorId(AverageColor averageColorId) {
         this.averageColorId = averageColorId;
     }
 }

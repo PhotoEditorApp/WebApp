@@ -1,5 +1,6 @@
 package com.webapp.service;
 
+import com.webapp.domain.AverageColor;
 import com.webapp.domain.UserImage;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
@@ -20,16 +21,11 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.file.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -168,25 +164,28 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public Resource getCollage(List<Long> ids) throws FileNotFoundException{
+    public Resource getCollage(List<Long> ids) throws StorageException{
         List<UserImage> userImageList = ids.stream()
                 .map(userImageRepository::findById)
                 .map(optional -> {
                     if (optional.isPresent())
                         return optional.get();
-                    else throw new FileNotFoundException("Not enough ids for collage");
+                    else throw new StorageException("Not enough ids for collage");
                 })
                 .collect(Collectors.toList());
 
         String collagePath = concatenateImages(userImageList);
+        String collageName = Paths.get(collagePath).getFileName().toString();
+
         // todo figure out fow to count average color
         UserImage collage = new UserImage(userImageList.get(0).getUser(), collagePath,
                 new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()),
-                userImageList.get(0).getSize() * userImageList.size(), 0L,
-                Paths.get(collagePath).getFileName().toString());
+                userImageList.get(0).getSize() * userImageList.size(), new AverageColor(0),
+                collageName);
 
         userImageRepository.save(collage);
-        return this.loadAsResource(collage.getName());
+
+        return this.loadAsResource(collageName);
     }
 
     @Override
@@ -194,43 +193,32 @@ public class UserImageService implements StorageService {
         userImageRepository.save(userImage);
     }
 
-//    public String concatenateImages(List<UserImage> userImageList){
-//        Mat collage = new Mat();
-//        Core.hconcat(userImageList.stream()
-//                .map(img -> Imgcodecs.imread(img.getPath()))
-//                .collect(Collectors.toList()), collage);
-//
-//        String path =
-//                "collage" + userImageList.stream()
-//                .map(userImage -> userImage.getId().toString())
-//                .reduce(String::concat);
-//
-//        Imgcodecs.imwrite(rootLocation.resolve(path).toString(), collage);
-//
-//        return path;
-//    }
-
     public String concatenateImages(List<UserImage> userImageList) throws StorageException{
-        // do not use this method until it won't be ready
-        // todo make a collage properly
-        List<BufferedImage> bufferedImages =
-        userImageList.stream()
-                .map(img -> {
-                    try {
-                        return Optional.ofNullable(ImageIO.read(new File(img.getPath())))
-                                .orElseThrow(() -> new StorageException("No such file " + img.getName()));
-                    } catch (IOException e) {
-                        throw new StorageException(e.getMessage());
-                    }
-                })
-                .collect(Collectors.toList());
+        String collageName = String.format("collage%d.png", new Random().nextInt());
+        String collagePath = rootLocation.resolve(collageName).normalize().toAbsolutePath().toString();
+        String script = Paths.get("scripts/make_collage.py").normalize().toAbsolutePath().toString();
+        List<String> command = userImageList.stream()
+                            .map(UserImage::getName)
+                            .map(path -> rootLocation.resolve(path).normalize().toAbsolutePath().toString())
+                            .collect(Collectors.toList());
 
-        var sortedByMaxH = bufferedImages.stream()
-                .sorted((v1, v2) -> Integer.compare(v2.getHeight(), v1.getHeight()))
-                .collect(Collectors.toList());
+        command.add(0, script);
+        command.add(0, "python3");
+        command.add(collagePath);
 
-        sortedByMaxH.forEach(System.out::println);
+        try {
+            Process process = new ProcessBuilder(command).start();
+            String errorStr = new BufferedReader(new InputStreamReader(process.getErrorStream()))
+                    .lines()
+                    .toString();
 
-        return new String("");
+            if (!errorStr.contains("java.util.stream.ReferencePipeline"))
+                throw new IOException(errorStr);
+
+        } catch (IOException e) {
+            throw new StorageException(e.getMessage());
+        }
+
+        return rootLocation.resolve(collageName).normalize().toString();
     }
 }

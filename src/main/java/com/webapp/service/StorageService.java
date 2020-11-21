@@ -34,7 +34,7 @@ public interface StorageService {
 
     void deleteImage(Long id) throws IOException, FileNotFoundException;
 
-    Resource getCollage(List<Long> ids) throws FileNotFoundException;
+    Resource getCollage(List<Long> ids) throws StorageException;
 
     void saveInfo(UserImage userImage) throws IllegalArgumentException;
 }
