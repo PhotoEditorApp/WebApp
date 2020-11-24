@@ -4,6 +4,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="image")
@@ -21,20 +24,40 @@ public class UserImage implements Serializable {
     private Date createTime;
     private Long size;
     private Date modifiedTime;
+    private Integer averageColor;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinColumn(name="av_color_id")
-    private AverageColor averageColorId;
+    @ManyToOne
+    @JoinColumn(name="space_id")
+    private Space space;
+
+    @OneToMany(mappedBy="image")
+    private Set<ImageTag> imageTags = new HashSet<>();
+
+    public Set<ImageTag> getImageTags() {
+        return imageTags;
+    }
+
+    public void setImageTags(Set<ImageTag> imageTags) {
+        this.imageTags = imageTags;
+    }
+
+    public Space getSpace() {
+        return space;
+    }
+
+    public void setSpace(Space space) {
+        this.space = space;
+    }
 
     public UserImage() {
     }
 
     public UserImage(UserAccount user, String path,
                      Date createTime, Date modifiedTime,
-                     Long size, AverageColor averageColorId,
+                     Long size, Integer averageColor,
                      String name){
         this.user = user;
-        this.averageColorId = averageColorId;
+        this.averageColor = averageColor;
         this.createTime = createTime;
         this.modifiedTime = modifiedTime;
         this.name = name;
@@ -98,11 +121,12 @@ public class UserImage implements Serializable {
         this.modifiedTime = modifiedTime;
     }
 
-    public AverageColor getAverageColorId() {
-        return averageColorId;
+
+    public Integer getAverageColor() {
+        return averageColor;
     }
 
-    public void setAverageColorId(AverageColor averageColorId) {
-        this.averageColorId = averageColorId;
+    public void setAverageColor(Integer averageColor) {
+        this.averageColor = averageColor;
     }
 }

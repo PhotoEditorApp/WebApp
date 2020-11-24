@@ -8,18 +8,18 @@ import com.webapp.enums.AccessType;
 import com.webapp.repositories.SpaceAccessRepository;
 import com.webapp.repositories.SpaceRepository;
 import com.webapp.repositories.UserRepository;
-import javassist.NotFoundException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public class SpaceAccessService {
+    @Lazy
     final SpaceAccessRepository spaceAccessRepository;
     final UserRepository userRepository;
     final SpaceRepository spaceRepository;
+    final UserImageService userImageService;
 
     public UserRepository getUserRepository() {
         return userRepository;
@@ -29,15 +29,37 @@ public class SpaceAccessService {
         return spaceRepository;
     }
 
-    public SpaceAccessService(SpaceAccessRepository spaceAccessRepository, UserRepository userRepository, SpaceRepository spaceRepository) {
+    public SpaceAccessService(SpaceAccessRepository spaceAccessRepository, UserRepository userRepository,
+                              SpaceRepository spaceRepository, UserImageService userImageService) {
         this.spaceAccessRepository = spaceAccessRepository;
         this.userRepository = userRepository;
         this.spaceRepository = spaceRepository;
+        this.userImageService = userImageService;
     }
 
-    public void setAccessBetweenUserAndSpace(Long user_id, Long space_id, AccessType accessType) throws Exception  {
-        Optional<UserAccount> user = userRepository.findById(user_id);
-        Optional<Space> space = spaceRepository.findById(space_id);
+    // check if user has definite access to the image
+    public boolean isUserHasAccessToImage(Long userId, Long imageId, AccessType type) throws Exception {
+        // find space_id of image
+        Long spaceId = userImageService.getSpace(imageId).getId();
+        Optional<SpaceAccess> spaceAccess = findSpaceAccess(spaceId, userId);
+        if (spaceAccess.isPresent()) {
+            return spaceAccess.get().getType().equals(type);
+        } else {
+            return false;
+        }
+    }
+
+    public Optional<SpaceAccess> findSpaceAccess(Long spaceId, Long userId) throws Exception{
+        Optional<UserAccount> userAccount = userRepository.findById(userId);
+        Optional<Space> space = spaceRepository.findById(spaceId);
+        userAccount.orElseThrow(()-> new Exception("cannot find user"));
+        space.orElseThrow(()-> new Exception("cannot find user"));
+        return spaceAccessRepository.findSpaceAccessById_UserIdAndIdSpaceId(userId, spaceId);
+    }
+
+    public void setAccessBetweenUserAndSpace(Long userId, Long spaceId, AccessType accessType) throws Exception {
+        Optional<UserAccount> user = userRepository.findById(userId);
+        Optional<Space> space = spaceRepository.findById(spaceId);
 
         // нет такого пользователя
         user.orElseThrow(() -> new Exception("cannot find user"));
@@ -46,10 +68,10 @@ public class SpaceAccessService {
 
         // ищем в SpaceAccess, иначе создаём свою
         SpaceAccess spaceAccess = spaceAccessRepository
-                                      .findSpaceAccessById_UserIdAndIdSpaceId(user_id, space_id)
-                                      .orElseGet(() -> new SpaceAccess(new SpaceAccessId(user_id, space_id), user.get(), space.get()));
+                .findSpaceAccessById_UserIdAndIdSpaceId(userId, spaceId)
+                .orElseGet(() -> new SpaceAccess(new SpaceAccessId(userId, spaceId), user.get(), space.get()));
 
-        if (spaceAccess.getType() == AccessType.CREATOR){
+        if (spaceAccess.getType() == AccessType.CREATOR) {
             throw new Exception("Can't change access type between CREATOR and space");
         }
 
@@ -58,7 +80,7 @@ public class SpaceAccessService {
         spaceAccessRepository.save(spaceAccess);
     }
 
-    public void delete(SpaceAccess spaceAccess){
+    public void delete(SpaceAccess spaceAccess) {
         spaceAccessRepository.delete(spaceAccess);
     }
 

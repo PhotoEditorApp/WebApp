@@ -23,6 +23,20 @@ public class UserAccount implements Serializable {
     @OneToMany(mappedBy="user")
     private Set<SpaceAccess> spaceAccesses = new HashSet<>();
 
+    @OneToMany(mappedBy="user")
+    private Set<UserTag> userTags = new HashSet<>();
+
+
+
+
+    public Set<UserTag> getUserTags() {
+        return userTags;
+    }
+
+    public void setUserTags(Set<UserTag> userTags) {
+        this.userTags = userTags;
+    }
+
     public Set<SpaceAccess> getSpaceAccesses() {
         return spaceAccesses;
     }

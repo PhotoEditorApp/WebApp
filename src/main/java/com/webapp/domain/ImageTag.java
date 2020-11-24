@@ -1,50 +1,70 @@
 package com.webapp.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.webapp.compositeKeys.ImageTagId;
+
+import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Objects;
 
 @Entity
 @Table(name = "image_tag")
 public class ImageTag implements Serializable {
-    @Id
-    private Long userTagId;
-    @Id
-    private Long imageId;
+    @EmbeddedId
+    ImageTagId imageTagId;
+
+    @ManyToOne
+    @MapsId("tagId")
+    @JoinColumn(name = "user_tag_id")
+    private UserTag tag;
+    @ManyToOne
+    @MapsId("imageId")
+    @JoinColumn(name = "image_id")
+    private UserImage image;
 
     public ImageTag() {
     }
 
-    public Long getUserTagId() {
-        return userTagId;
+    public ImageTag(UserImage userImage, UserTag userTag) {
+        this.imageTagId = new ImageTagId(userImage.getId(), userTag.getId());
+        this.tag = userTag;
+        this.image = userImage;
     }
 
-    public void setUserTagId(Long userTagId) {
-        this.userTagId = userTagId;
+    public ImageTagId getImageTagId() {
+        return imageTagId;
     }
 
-    public Long getImageId() {
-        return imageId;
+    public void setImageTagId(ImageTagId imageTagId) {
+        this.imageTagId = imageTagId;
     }
 
-    public void setImageId(Long imageId) {
-        this.imageId = imageId;
+    public UserTag getTag() {
+        return tag;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ImageTag imageTag = (ImageTag) o;
-        return Objects.equals(userTagId, imageTag.userTagId) &&
-                Objects.equals(imageId, imageTag.imageId);
+    public void setTag(UserTag tag) {
+        this.tag = tag;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(userTagId, imageId);
+    public UserImage getImage() {
+        return image;
     }
+
+    public void setImage(UserImage image) {
+        this.image = image;
+    }
+
+    //    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        ImageTag imageTag = (ImageTag) o;
+//        return Objects.equals(tagId, imageTag.tagId) &&
+//                Objects.equals(imageId, imageTag.imageId);
+//    }
+
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(tagId, imageId);
+//    }
 }
 

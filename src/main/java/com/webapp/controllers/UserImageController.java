@@ -3,10 +3,13 @@ package com.webapp.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webapp.domain.UserImage;
+import com.webapp.enums.AccessType;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
 import com.webapp.json.ActionMessage;
 import com.webapp.json.FileResponse;
+import com.webapp.service.UserImageService;
+import com.webapp.service.ImageTagService;
 import com.webapp.service.StorageService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -20,16 +23,48 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/image")
 public class UserImageController {
 
     private final StorageService storageService;
+    private final UserImageService imageService;
+    private final ImageTagService imageTagService;
 
-    public UserImageController(StorageService storageService) {
+    public UserImageController(StorageService storageService, UserImageService imageService,  ImageTagService imageTagService) {
         this.storageService = storageService;
+        this.imageService = imageService;
+        this.imageTagService = imageTagService;
     }
+
+    // get all tags of image
+    @GetMapping("/{image_id}/tag")
+    public ResponseEntity<?> getTagsByImage(@PathVariable Long image_id) {
+        try {
+            return new ResponseEntity<>(imageService.getTagsByImage(image_id), HttpStatus.OK);
+
+        } catch (Exception exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // join user tag and image
+    @PutMapping("/{image_id}/tag")
+    public ResponseEntity<?> c(@PathVariable Long image_id,
+                               @RequestParam String tag_name,
+                               @RequestParam Long user_id) {
+        try {
+            imageTagService.save(image_id, tag_name, user_id);
+            return new ResponseEntity<>("tag successfully added", HttpStatus.OK);
+
+        } catch (Exception exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 
     @GetMapping("/get_image_path")
     public ResponseEntity<?> getImageByPath(@RequestParam String path) {
@@ -47,7 +82,7 @@ public class UserImageController {
     }
 
     @GetMapping("/get_image_id")
-    public ResponseEntity<?> getImageById(@RequestParam Long id){
+    public ResponseEntity<?> getImageById(@RequestParam Long id) {
         Resource resource = storageService.getResource(id);
 
         try {
@@ -62,8 +97,8 @@ public class UserImageController {
     }
 
     @GetMapping("/get_collage")
-    public ResponseEntity<?> getCollage(@RequestParam("ids") List<Long> ids){
-        if (!ids.isEmpty()){
+    public ResponseEntity<?> getCollage(@RequestParam("ids") List<Long> ids) {
+        if (!ids.isEmpty()) {
             Resource resource = storageService.getCollage(ids);
 
             try {
@@ -82,10 +117,10 @@ public class UserImageController {
     }
 
     @DeleteMapping("/delete_image")
-    public ResponseEntity<ActionMessage> deleteImageById(@RequestParam Long id){
+    public ResponseEntity<ActionMessage> deleteImageById(@RequestParam Long id) {
         try {
             storageService.deleteImage(id);
-        }catch (FileNotFoundException | IOException e){
+        } catch (FileNotFoundException | IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
@@ -95,10 +130,10 @@ public class UserImageController {
     }
 
     @PutMapping("/edit_info")
-    public ResponseEntity<ActionMessage> editImageInfo(@RequestBody UserImage userImage){
+    public ResponseEntity<ActionMessage> editImageInfo(@RequestBody UserImage userImage) {
         try {
             storageService.editInfo(userImage);
-        }catch (StorageException e){
+        } catch (StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
@@ -109,13 +144,13 @@ public class UserImageController {
 
     @PostMapping("/upload_image")
     public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file,
-                                    @RequestParam("info") String userImageString) {
+                                         @RequestParam("info") String userImageString) {
         String name = storageService.store(file);
         try {
             UserImage userImage = new ObjectMapper().readValue(userImageString,
                     UserImage.class);
             storageService.saveInfo(userImage);
-        }catch (IllegalArgumentException | JsonProcessingException e){
+        } catch (IllegalArgumentException | JsonProcessingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
@@ -136,4 +171,11 @@ public class UserImageController {
 //                .map(this::uploadImage)
 //                .collect(Collectors.toList());
     }
+
+    public StorageService getStorageService() {
+        return storageService;
+    }
+
+
+
 }

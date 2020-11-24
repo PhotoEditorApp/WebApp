@@ -1,30 +1,33 @@
 package com.webapp.json;
 
+import com.webapp.domain.Space;
 import com.webapp.domain.UserAccount;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-public class SpaceMessage implements Serializable{
+public class SpaceResponse implements Serializable{
     private Long id;
     private Long userId;
     private String name;
     private String description;
     private Date createdTime;
     private Date modifiedTime;
-    private int color;
+    private Integer color;
 
-    public int getColor() {
-        return color;
+
+    public SpaceResponse(Space space) {
+        this.id = space.getId();
+        this.userId = space.getId();
+        this.name = space.getName();
+        this.description = space.getDescription();
+        this.createdTime = space.getCreatedTime();
+        this.modifiedTime = space.getModifiedTime();
+        this.color = space.getColor();
     }
 
-    public void setColor(int color) {
-        this.color = color;
-    }
-    // цвет
-    //    private int co
-
+    public SpaceResponse(){}
 
     public Long getId() {
         return id;
@@ -72,5 +75,13 @@ public class SpaceMessage implements Serializable{
 
     public void setModifiedTime(Date modifiedTime) {
         this.modifiedTime = modifiedTime;
+    }
+
+    public Integer getColor() {
+        return color;
+    }
+
+    public void setColor(Integer color) {
+        this.color = color;
     }
 }

@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -33,6 +34,18 @@ public class Space implements Serializable {
 
     @OneToMany(mappedBy="space")
     private Set<SpaceAccess> spaceAccesses = new HashSet<>();
+
+
+    @OneToMany(mappedBy = "space")
+    private List<UserImage> userImages;
+
+    public List<UserImage> getUserImages() {
+        return userImages;
+    }
+
+    public void setUserImages(List<UserImage> userImages) {
+        this.userImages = userImages;
+    }
 
     public Set<SpaceAccess> getSpaceAccesses() {
         return spaceAccesses;

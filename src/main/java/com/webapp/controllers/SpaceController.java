@@ -5,9 +5,8 @@ import com.webapp.domain.UserAccount;
 //import com.webapp.json.UserSpacesMessage;
 //import com.webapp.repositories.SpaceRepository;
 //import com.webapp.service.SpaceService;
-import com.webapp.enums.AccessType;
 import com.webapp.json.CreateSpaceRequest;
-import com.webapp.json.SpaceMessage;
+import com.webapp.json.SpaceResponse;
 import com.webapp.service.SpaceService;
 import com.webapp.service.UserAccountService;
 import org.springframework.http.HttpEntity;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
@@ -37,47 +35,20 @@ public class SpaceController {
         this.userAccountService = userAccountService;
     }
 
-    // get all available spaces of user by params
-    @GetMapping("/my_spaces")
-    public HttpEntity<? extends Serializable> getSpacesByUserId(@RequestParam Long user_id,
-                                                                @RequestParam(required = false) Optional<AccessType> type){
-        try{
-            // form spaces, which convert to json response
-            ArrayList<SpaceMessage> spaces = new ArrayList<>();
-            spaceService.getSpacesByUserId(user_id, type).forEach(space -> {
-                SpaceMessage spaceMessage = new SpaceMessage();
-                spaceMessage.setId(space.getId());
-                spaceMessage.setUserId(space.getUser().getId());
-                spaceMessage.setColor(space.getColor());
-                spaceMessage.setName(space.getName());
-                spaceMessage.setDescription(space.getDescription());
-                spaceMessage.setCreatedTime(space.getCreatedTime());
-                spaceMessage.setModifiedTime(space.getModifiedTime());
-                spaces.add(spaceMessage);
-            });
-
-
-            return new ResponseEntity<>(spaces, HttpStatus.OK);
-        }
-        catch (Exception exception){
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
     // get space by id
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public HttpEntity<? extends Serializable> getSpace(@PathVariable Long id){
         try {
             Space space = spaceService.getById(id);
-            SpaceMessage spaceMessage = new SpaceMessage();
-            spaceMessage.setId(space.getId());
-            spaceMessage.setColor(space.getColor());
-            spaceMessage.setUserId(space.getUser().getId());
-            spaceMessage.setName(space.getName());
-            spaceMessage.setDescription(space.getDescription());
-            spaceMessage.setCreatedTime(space.getCreatedTime());
-            spaceMessage.setModifiedTime(space.getModifiedTime());
-            return new ResponseEntity(spaceMessage, HttpStatus.OK);
+            SpaceResponse spaceResponse = new SpaceResponse();
+            spaceResponse.setId(space.getId());
+            spaceResponse.setColor(space.getColor());
+            spaceResponse.setUserId(space.getUser().getId());
+            spaceResponse.setName(space.getName());
+            spaceResponse.setDescription(space.getDescription());
+            spaceResponse.setCreatedTime(space.getCreatedTime());
+            spaceResponse.setModifiedTime(space.getModifiedTime());
+            return new ResponseEntity(spaceResponse, HttpStatus.OK);
 
         }
         catch (Exception exception){
@@ -96,7 +67,16 @@ public class SpaceController {
         }
     }
 
-
+    // get all images, which are contained by space
+    @GetMapping("/{space_id}/image")
+    public ResponseEntity<? extends Serializable> getImagesBySpace(@PathVariable Long space_id){
+        try{
+            return new ResponseEntity<>(spaceService.getImages(space_id), HttpStatus.OK);
+        }
+        catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
     // create new space by user_id
     @PutMapping("/{user_id}")
@@ -121,7 +101,7 @@ public class SpaceController {
 
     // delete space and all spaceAccess, which are connected with it
     @Transactional
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteSpace(@PathVariable Long id){
         try {
             spaceService.deleteById(id);

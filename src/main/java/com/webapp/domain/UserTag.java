@@ -2,18 +2,37 @@ package com.webapp.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "user_tag")
 public class UserTag implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue( strategy = GenerationType.SEQUENCE,
+                     generator = "user_tag_seq")
+    @SequenceGenerator(name="user_tag_seq", sequenceName = "user_tag_id_seq", allocationSize = 1)
     private Long id;
     private String name;
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    private UserAccount user;
+    @OneToMany(mappedBy="tag")
+    private Set<ImageTag> imageTags;
+
+    public Set<ImageTag> getImageTags() {
+        return imageTags;
+    }
+
+    public void setImageTags(Set<ImageTag> imageTags) {
+        this.imageTags = imageTags;
+    }
 
     public UserTag() {
+    }
+
+    public UserTag(String name, UserAccount user){
+        this.name = name;
+        this.user = user;
     }
 
     public Long getId() {
@@ -32,26 +51,11 @@ public class UserTag implements Serializable {
         this.name = name;
     }
 
-    public Long getUserId() {
-        return userId;
+    public UserAccount getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserTag userTag = (UserTag) o;
-        return Objects.equals(id, userTag.id) &&
-                Objects.equals(name, userTag.name) &&
-                Objects.equals(userId, userTag.userId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, userId);
+    public void setUser(UserAccount user) {
+        this.user = user;
     }
 }

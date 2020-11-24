@@ -5,6 +5,7 @@ import com.webapp.json.ProfileRequestMessage;
 import com.webapp.json.SpaceAccessRequest;
 import com.webapp.service.ProfileService;
 import com.webapp.service.SpaceAccessService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping
 public class SpaceAccessController {
+    @Lazy
     final SpaceAccessService spaceAccessService;
 
 

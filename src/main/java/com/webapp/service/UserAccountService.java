@@ -4,7 +4,9 @@ import com.webapp.domain.Profile;
 import com.webapp.domain.Space;
 import com.webapp.domain.UserAccount;
 import com.webapp.domain.UserAccountSecurity;
+import com.webapp.enums.AccessType;
 import com.webapp.json.UserAccountResponseMessage;
+import com.webapp.repositories.SpaceRepository;
 import com.webapp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,6 +38,8 @@ public class UserAccountService implements UserDetailsService {
     @Autowired
     private ProfileService profileService;
 
+    @Autowired
+    private SpaceRepository spaceRepository;
 
 
     @Override
@@ -116,4 +121,7 @@ public class UserAccountService implements UserDetailsService {
 
         return userAccountResponseMessages;
     }
+
+
+
 }

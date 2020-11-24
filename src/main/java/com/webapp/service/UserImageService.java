@@ -1,15 +1,13 @@
 package com.webapp.service;
 
-import com.webapp.domain.AverageColor;
+import com.webapp.domain.Space;
 import com.webapp.domain.UserImage;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
-import com.webapp.opencv.OperationsWithImages;
+import com.webapp.json.TagResponse;
 import com.webapp.properties.StorageProperties;
 import com.webapp.repositories.UserImageRepository;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -19,12 +17,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.nio.file.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,6 +34,39 @@ public class UserImageService implements StorageService {
         this.rootLocation = Paths.get(properties.getLocation());
         this.userImageRepository = userImageRepository;
     }
+
+    public Space getSpace(Long imageId) throws Exception {
+        Optional<UserImage> userImage = userImageRepository.findById(imageId);
+        if (userImage.isPresent()){
+            return userImage.get().getSpace();
+        }
+        else{
+            throw new Exception("cannot find image");
+        }
+    }
+
+    // get image's tags
+    public ArrayList<TagResponse> getTagsByImage(Long imageId) throws Exception {
+        Optional<UserImage> userImage = userImageRepository.findById(imageId);
+        if (userImage.isPresent()){
+            ArrayList<TagResponse>  tagResponses = new ArrayList<>();
+            userImage.get().getImageTags()
+                           .forEach(imageTag -> tagResponses.add(new TagResponse(imageTag.getTag())));
+            return tagResponses;
+        }
+        else{
+            throw new Exception("cannot find image");
+        }
+    }
+
+    public boolean exists(Long imageId){
+        return userImageRepository.existsById(imageId);
+    }
+
+    public Optional<UserImage> findById(Long imageId){
+        return userImageRepository.findById(imageId);
+    }
+
 
     @Override
     @PostConstruct
@@ -134,7 +161,7 @@ public class UserImageService implements StorageService {
 
         if (userImageOriginal.isPresent()){
             UserImage userImageEdited = userImageOriginal.get();
-            userImageEdited.setAverageColorId(userImage.getAverageColorId());
+            userImageEdited.setAverageColor(userImage.getAverageColor());
             userImageEdited.setCreateTime(userImage.getCreateTime());
             userImageEdited.setModifiedTime(userImage.getModifiedTime());
             userImageEdited.setName(userImage.getName());
@@ -163,6 +190,10 @@ public class UserImageService implements StorageService {
         }
     }
 
+    public void delete(UserImage userImage){
+        userImageRepository.delete(userImage);
+    }
+
     @Override
     public Resource getCollage(List<Long> ids) throws StorageException{
         List<UserImage> userImageList = ids.stream()
@@ -180,7 +211,7 @@ public class UserImageService implements StorageService {
         // todo figure out fow to count average color
         UserImage collage = new UserImage(userImageList.get(0).getUser(), collagePath,
                 new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()),
-                userImageList.get(0).getSize() * userImageList.size(), new AverageColor(0),
+                userImageList.get(0).getSize() * userImageList.size(), 0,
                 collageName);
 
         userImageRepository.save(collage);
