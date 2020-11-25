@@ -1,11 +1,13 @@
 package com.webapp.service;
 
+import com.webapp.domain.AverageColor;
 import com.webapp.domain.Space;
 import com.webapp.domain.UserImage;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
 import com.webapp.json.TagResponse;
 import com.webapp.properties.StorageProperties;
+import com.webapp.repositories.AverageColorRepository;
 import com.webapp.repositories.UserImageRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +30,14 @@ public class UserImageService implements StorageService {
 
     private final Path rootLocation;
     private final UserImageRepository userImageRepository;
+    private final AverageColorRepository averageColorRepository;
 
     @Autowired
-    public UserImageService(StorageProperties properties, UserImageRepository userImageRepository) {
+    public UserImageService(StorageProperties properties, UserImageRepository userImageRepository,
+                            AverageColorRepository averageColorRepository) {
         this.rootLocation = Paths.get(properties.getLocation());
         this.userImageRepository = userImageRepository;
+        this.averageColorRepository = averageColorRepository;
     }
 
     public Space getSpace(Long imageId) throws Exception {
@@ -209,9 +214,13 @@ public class UserImageService implements StorageService {
         String collageName = Paths.get(collagePath).getFileName().toString();
 
         // todo figure out fow to count average color
+        int countedRgb = 0;
+        Optional<AverageColor> averageColorOptional = averageColorRepository.findByRgb(countedRgb);
+        AverageColor averageColor = averageColorOptional.orElseGet(() -> new AverageColor(countedRgb));
+
         UserImage collage = new UserImage(userImageList.get(0).getUser(), collagePath,
                 new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()),
-                userImageList.get(0).getSize() * userImageList.size(), 0,
+                userImageList.get(0).getSize() * userImageList.size(), averageColor,
                 collageName);
 
         userImageRepository.save(collage);
@@ -234,7 +243,11 @@ public class UserImageService implements StorageService {
                             .collect(Collectors.toList());
 
         command.add(0, script);
-        command.add(0, "python3");
+        if (System.getProperty("os.name").startsWith("Windows"))
+            command.add(0, "C:\\python3\\python3.exe");
+        else
+            command.add(0, "python3");
+
         command.add(collagePath);
 
         try {
@@ -246,7 +259,9 @@ public class UserImageService implements StorageService {
             if (!errorStr.contains("java.util.stream.ReferencePipeline"))
                 throw new IOException(errorStr);
 
-        } catch (IOException e) {
+            process.waitFor();
+
+        } catch (IOException | InterruptedException e) {
             throw new StorageException(e.getMessage());
         }
 
