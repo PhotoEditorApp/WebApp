@@ -24,6 +24,7 @@ public class SpaceAccessController {
         this.spaceAccessService = spaceAccessService;
     }
 
+    // create new space access or update the old one
     @PutMapping("/space_access")
     public ResponseEntity<? extends Serializable> createSpaceAccess(@RequestBody SpaceAccessRequest spaceAccessRequest) {
         try{

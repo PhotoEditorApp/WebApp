@@ -19,6 +19,7 @@ public class TagController {
         this.userAccountService = userAccountService;
     }
 
+    // add new tag
     @PostMapping
     public ResponseEntity<?> createTag(@RequestBody TagRequest tagRequest){
         try {
