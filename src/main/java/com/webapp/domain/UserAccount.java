@@ -20,6 +20,17 @@ public class UserAccount implements Serializable {
     private boolean enabled;
     private String registration_time;
 
+    @OneToOne(mappedBy = "userAccount")
+    private Profile profile;
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
     @OneToMany(mappedBy="user")
     private Set<SpaceAccess> spaceAccesses = new HashSet<>();
 

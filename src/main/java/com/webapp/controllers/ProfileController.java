@@ -6,7 +6,6 @@ import com.webapp.json.ProfileRequestMessage;
 import com.webapp.service.ProfileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
@@ -29,7 +28,7 @@ public class ProfileController {
 
         if (profile.isPresent()){
             ProfileMessage profileMessage = new ProfileMessage();
-            profileMessage.setUser_id(profile.get().getUser_id());
+            profileMessage.setUser_id(profile.get().getId());
             profileMessage.setEmail(profile.get().getEmail());
             profileMessage.setFirstName(profile.get().getFirstName());
             profileMessage.setLastName(profile.get().getLastName());

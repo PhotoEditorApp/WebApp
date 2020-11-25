@@ -26,7 +26,7 @@ public class ImageResponse implements Serializable {
     public ImageResponse(UserImage image){
         this.id = image.getId();
         this.name = image.getName();
-        this.average_color = image.getAverageColor();
+        this.average_color = image.getAverageColor().getRgb();
         this.user_id = image.getUser().getId();
         this.path = image.getPath();
         this.createTime = image.getCreateTime();

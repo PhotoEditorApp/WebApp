@@ -24,7 +24,10 @@ public class UserImage implements Serializable {
     private Date createTime;
     private Long size;
     private Date modifiedTime;
-    private Integer averageColor;
+
+    @ManyToOne
+    @JoinColumn(name = "avg_color_id", referencedColumnName = "id")
+    private AverageColor averageColor;
 
     @ManyToOne
     @JoinColumn(name="space_id")
@@ -57,7 +60,6 @@ public class UserImage implements Serializable {
                      Long size, Integer averageColor,
                      String name){
         this.user = user;
-        this.averageColor = averageColor;
         this.createTime = createTime;
         this.modifiedTime = modifiedTime;
         this.name = name;
@@ -122,11 +124,11 @@ public class UserImage implements Serializable {
     }
 
 
-    public Integer getAverageColor() {
+    public AverageColor getAverageColor() {
         return averageColor;
     }
 
-    public void setAverageColor(Integer averageColor) {
+    public void setAverageColor(AverageColor averageColor) {
         this.averageColor = averageColor;
     }
 }
