@@ -3,14 +3,13 @@ package com.webapp.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webapp.domain.UserImage;
-import com.webapp.enums.AccessType;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
 import com.webapp.json.ActionMessage;
 import com.webapp.json.FileResponse;
-import com.webapp.service.UserImageService;
 import com.webapp.service.ImageTagService;
 import com.webapp.service.StorageService;
+import com.webapp.service.UserImageService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/image")
@@ -84,6 +82,21 @@ public class UserImageController {
     @GetMapping("/get_image_id")
     public ResponseEntity<?> getImageById(@RequestParam Long id) {
         Resource resource = storageService.getResource(id);
+
+        try {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(Files.readAllBytes(Paths.get(resource.getURI().getPath())));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/get_preview_img_id")
+    public ResponseEntity<?> getPreviewByImageId(@RequestParam Long id) {
+        Resource resource = storageService.getPreview(id);
 
         try {
             return ResponseEntity.ok()
@@ -171,11 +184,4 @@ public class UserImageController {
 //                .map(this::uploadImage)
 //                .collect(Collectors.toList());
     }
-
-    public StorageService getStorageService() {
-        return storageService;
-    }
-
-
-
 }

@@ -37,4 +37,6 @@ public interface StorageService {
     Resource getCollage(List<Long> ids) throws StorageException;
 
     void saveInfo(UserImage userImage) throws IllegalArgumentException;
+
+    Resource getPreview(Long ids) throws StorageException;
 }

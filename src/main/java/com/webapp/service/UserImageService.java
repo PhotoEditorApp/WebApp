@@ -206,7 +206,8 @@ public class UserImageService implements StorageService {
                 .map(optional -> {
                     if (optional.isPresent())
                         return optional.get();
-                    else throw new StorageException("Not enough ids for collage");
+                    else throw new StorageException("Not enough ids for collage" +
+                            " or one of the images not found");
                 })
                 .collect(Collectors.toList());
 
@@ -249,7 +250,50 @@ public class UserImageService implements StorageService {
             command.add(0, "python3");
 
         command.add(collagePath);
+        startProcess(command);
 
+        return rootLocation.resolve(collageName).normalize().toString();
+    }
+
+    @Override
+    public Resource getPreview(Long id) throws StorageException{
+        UserImage userImage = userImageRepository.findById(id)
+                .orElseThrow(() -> new StorageException("There's no image with such id: " + id.toString()));
+
+        String previewPath = makePreview(userImage);
+        String previewName = Paths.get(previewPath).getFileName().toString();
+
+        int countedRgb = 0;
+        Optional<AverageColor> averageColorOptional = averageColorRepository.findByRgb(countedRgb);
+        AverageColor averageColor = averageColorOptional.orElseGet(() -> new AverageColor(countedRgb));
+
+        UserImage preview = new UserImage(userImage.getUser(), previewPath,
+                new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()),
+                userImage.getSize(), averageColor,
+                previewName);
+
+        userImageRepository.save(preview);
+
+        return this.loadAsResource(previewName);
+    }
+
+    public String makePreview(UserImage userImage) throws StorageException{
+        String previewName = String.format("preview_%s.png", userImage.getName().split("\\.")[0]);
+        String imagePath = rootLocation.resolve(userImage.getName()).normalize().toAbsolutePath().toString();
+        String previewPath = rootLocation.resolve(previewName).normalize().toAbsolutePath().toString();
+        String script = Paths.get("scripts/make_preview.py").normalize().toAbsolutePath().toString();
+
+        List<String> command = new ArrayList<>(List.of(script, imagePath, previewPath));
+        if (System.getProperty("os.name").startsWith("Windows"))
+            command.add(0, "C:\\python3\\python3.exe");
+        else
+            command.add(0, "python3");
+
+        startProcess(command);
+        return rootLocation.resolve(previewName).normalize().toString();
+    }
+
+    private void startProcess(List<String> command) throws StorageException{
         try {
             Process process = new ProcessBuilder(command).start();
             String errorStr = new BufferedReader(new InputStreamReader(process.getErrorStream()))
@@ -264,7 +308,5 @@ public class UserImageService implements StorageService {
         } catch (IOException | InterruptedException e) {
             throw new StorageException(e.getMessage());
         }
-
-        return rootLocation.resolve(collageName).normalize().toString();
     }
 }
