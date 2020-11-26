@@ -2,14 +2,19 @@ package com.webapp.service;
 
 import com.webapp.domain.AverageColor;
 import com.webapp.domain.Space;
+import com.webapp.domain.UserAccount;
 import com.webapp.domain.UserImage;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
+import com.webapp.imageprocessing.Collage;
+import com.webapp.imageprocessing.Preview;
 import com.webapp.json.TagResponse;
 import com.webapp.properties.StorageProperties;
 import com.webapp.repositories.AverageColorRepository;
+import com.webapp.repositories.SpaceRepository;
 import com.webapp.repositories.UserImageRepository;
 
+import com.webapp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -31,13 +36,18 @@ public class UserImageService implements StorageService {
     private final Path rootLocation;
     private final UserImageRepository userImageRepository;
     private final AverageColorRepository averageColorRepository;
+    private final UserRepository userRepository;
+    private final SpaceRepository spaceRepository;
 
     @Autowired
     public UserImageService(StorageProperties properties, UserImageRepository userImageRepository,
-                            AverageColorRepository averageColorRepository) {
+                            AverageColorRepository averageColorRepository, UserRepository userRepository,
+                            SpaceRepository spaceRepository) {
         this.rootLocation = Paths.get(properties.getLocation());
         this.userImageRepository = userImageRepository;
         this.averageColorRepository = averageColorRepository;
+        this.userRepository = userRepository;
+        this.spaceRepository = spaceRepository;
     }
 
     public Space getSpace(Long imageId) throws Exception {
@@ -211,48 +221,42 @@ public class UserImageService implements StorageService {
                 })
                 .collect(Collectors.toList());
 
-        String collagePath = concatenateImages(userImageList);
-        String collageName = Paths.get(collagePath).getFileName().toString();
+        String collagePath = new Collage(rootLocation, userImageList).processing();
+        saveInfo(userImageList.get(0).getUser().getId(),
+                userImageList.get(0).getSpace().getId(),
+                collagePath);
+
+        return this.loadAsResource(Paths.get(collagePath).getFileName().toString());
+    }
+
+    @Override
+    public void saveInfo(Long user_id, Long space_id, String imagePath) throws IllegalArgumentException,
+            StorageException{
+        UserAccount user = userRepository.findById(user_id)
+                .orElseThrow(() -> new StorageException("No user with such id: " + user_id.toString()));
+        String imageName = Paths.get(imagePath).getFileName().toString();
+
+        Optional<Space> spaceRepositoryOptional = spaceRepository.findById(space_id);
+        Space space = spaceRepositoryOptional
+                .orElseThrow(() -> new StorageException("No space with such id: " + space_id.toString()));
 
         // todo figure out fow to count average color
         int countedRgb = 0;
         Optional<AverageColor> averageColorOptional = averageColorRepository.findByRgb(countedRgb);
         AverageColor averageColor = averageColorOptional.orElseGet(() -> new AverageColor(countedRgb));
 
-        UserImage collage = new UserImage(userImageList.get(0).getUser(), collagePath,
-                new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()),
-                userImageList.get(0).getSize() * userImageList.size(), averageColor,
-                collageName);
+        try {
+            UserImage userImage = new UserImage(user, imagePath,
+                    new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()),
+                    Files.size(Paths.get(imagePath)), averageColor,
+                    imageName, space);
 
-        userImageRepository.save(collage);
-
-        return this.loadAsResource(collageName);
-    }
-
-    @Override
-    public void saveInfo(UserImage userImage) throws IllegalArgumentException{
-        userImageRepository.save(userImage);
-    }
-
-    public String concatenateImages(List<UserImage> userImageList) throws StorageException{
-        String collageName = String.format("collage%d.png", new Random().nextInt());
-        String collagePath = rootLocation.resolve(collageName).normalize().toAbsolutePath().toString();
-        String script = Paths.get("scripts/make_collage.py").normalize().toAbsolutePath().toString();
-        List<String> command = userImageList.stream()
-                            .map(UserImage::getName)
-                            .map(path -> rootLocation.resolve(path).normalize().toAbsolutePath().toString())
-                            .collect(Collectors.toList());
-
-        command.add(0, script);
-        if (System.getProperty("os.name").startsWith("Windows"))
-            command.add(0, "C:\\python3\\python3.exe");
-        else
-            command.add(0, "python3");
-
-        command.add(collagePath);
-        startProcess(command);
-
-        return rootLocation.resolve(collageName).normalize().toString();
+            String previewPath = new Preview(rootLocation, userImage).processing();
+            userImage.setPreview_path(previewPath);
+            userImageRepository.save(userImage);
+        } catch (IOException e) {
+            throw new StorageException(e.getMessage());
+        }
     }
 
     @Override
@@ -260,53 +264,9 @@ public class UserImageService implements StorageService {
         UserImage userImage = userImageRepository.findById(id)
                 .orElseThrow(() -> new StorageException("There's no image with such id: " + id.toString()));
 
-        String previewPath = makePreview(userImage);
-        String previewName = Paths.get(previewPath).getFileName().toString();
+        String previewPath = new Preview(rootLocation, userImage).processing();
+        saveInfo(userImage.getUser().getId(), userImage.getSpace().getId(), previewPath);
 
-        int countedRgb = 0;
-        Optional<AverageColor> averageColorOptional = averageColorRepository.findByRgb(countedRgb);
-        AverageColor averageColor = averageColorOptional.orElseGet(() -> new AverageColor(countedRgb));
-
-        UserImage preview = new UserImage(userImage.getUser(), previewPath,
-                new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()),
-                userImage.getSize(), averageColor,
-                previewName);
-
-        userImageRepository.save(preview);
-
-        return this.loadAsResource(previewName);
-    }
-
-    public String makePreview(UserImage userImage) throws StorageException{
-        String previewName = String.format("preview_%s.png", userImage.getName().split("\\.")[0]);
-        String imagePath = rootLocation.resolve(userImage.getName()).normalize().toAbsolutePath().toString();
-        String previewPath = rootLocation.resolve(previewName).normalize().toAbsolutePath().toString();
-        String script = Paths.get("scripts/make_preview.py").normalize().toAbsolutePath().toString();
-
-        List<String> command = new ArrayList<>(List.of(script, imagePath, previewPath));
-        if (System.getProperty("os.name").startsWith("Windows"))
-            command.add(0, "C:\\python3\\python3.exe");
-        else
-            command.add(0, "python3");
-
-        startProcess(command);
-        return rootLocation.resolve(previewName).normalize().toString();
-    }
-
-    private void startProcess(List<String> command) throws StorageException{
-        try {
-            Process process = new ProcessBuilder(command).start();
-            String errorStr = new BufferedReader(new InputStreamReader(process.getErrorStream()))
-                    .lines()
-                    .toString();
-
-            if (!errorStr.contains("java.util.stream.ReferencePipeline"))
-                throw new IOException(errorStr);
-
-            process.waitFor();
-
-        } catch (IOException | InterruptedException e) {
-            throw new StorageException(e.getMessage());
-        }
+        return this.loadAsResource(Paths.get(previewPath).getFileName().toString());
     }
 }

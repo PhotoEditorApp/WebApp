@@ -7,6 +7,7 @@ import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
 import com.webapp.json.ActionMessage;
 import com.webapp.json.FileResponse;
+import com.webapp.properties.StorageProperties;
 import com.webapp.service.ImageTagService;
 import com.webapp.service.StorageService;
 import com.webapp.service.UserImageService;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -61,8 +63,6 @@ public class UserImageController {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-
-
 
     @GetMapping("/get_image_path")
     public ResponseEntity<?> getImageByPath(@RequestParam String path) {
@@ -156,22 +156,20 @@ public class UserImageController {
     }
 
     @PostMapping("/upload_image")
-    public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file,
-                                         @RequestParam("info") String userImageString) {
+    public ResponseEntity<?> uploadImage(@RequestParam("user_id") Long user_id, @RequestParam("space_id") Long space_id,
+                                         @RequestParam("file") MultipartFile file) {
         String name = storageService.store(file);
-        try {
-            UserImage userImage = new ObjectMapper().readValue(userImageString,
-                    UserImage.class);
-            storageService.saveInfo(userImage);
-        } catch (IllegalArgumentException | JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ActionMessage(e.getMessage()));
-        }
-
         String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download/")
                 .path(name)
                 .toUriString();
+
+        try {
+            storageService.saveInfo(user_id, space_id, "uploads/" + name);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
 
         return ResponseEntity.ok()
                 .body(new FileResponse(name, uri, file.getContentType(), file.getSize()));

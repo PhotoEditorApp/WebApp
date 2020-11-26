@@ -24,6 +24,7 @@ public class UserImage implements Serializable {
     private Date createTime;
     private Long size;
     private Date modifiedTime;
+    private String preview_path;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "avg_color_id", referencedColumnName = "id")
@@ -58,7 +59,7 @@ public class UserImage implements Serializable {
     public UserImage(UserAccount user, String path,
                      Date createTime, Date modifiedTime,
                      Long size, AverageColor averageColor,
-                     String name){
+                     String name, Space space){
         this.user = user;
         this.createTime = createTime;
         this.modifiedTime = modifiedTime;
@@ -66,6 +67,7 @@ public class UserImage implements Serializable {
         this.path = path;
         this.size = size;
         this.averageColor = averageColor;
+        this.space = space;
     }
 
     public Long getId() {
@@ -130,5 +132,13 @@ public class UserImage implements Serializable {
 
     public void setAverageColor(AverageColor averageColor) {
         this.averageColor = averageColor;
+    }
+
+    public String getPreview_path() {
+        return preview_path;
+    }
+
+    public void setPreview_path(String preview_path) {
+        this.preview_path = preview_path;
     }
 }
