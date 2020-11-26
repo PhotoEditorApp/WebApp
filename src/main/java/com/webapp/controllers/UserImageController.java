@@ -72,7 +72,7 @@ public class UserImageController {
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(Files.readAllBytes(Paths.get(resource.getURI().getPath())));
+                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
@@ -87,7 +87,7 @@ public class UserImageController {
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(Files.readAllBytes(Paths.get(resource.getURI().getPath())));
+                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
@@ -102,7 +102,7 @@ public class UserImageController {
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(Files.readAllBytes(Paths.get(resource.getURI().getPath())));
+                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
@@ -118,7 +118,7 @@ public class UserImageController {
                 return ResponseEntity.ok()
                         .header(HttpHeaders.CONTENT_DISPOSITION,
                                 "attachment; filename=\"" + resource.getFilename() + "\"")
-                        .body(Files.readAllBytes(Paths.get(resource.getURI().getPath())));
+                        .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
             } catch (IOException e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(new ActionMessage(e.getMessage()));

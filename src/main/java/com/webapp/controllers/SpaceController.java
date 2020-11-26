@@ -48,10 +48,11 @@ public class SpaceController {
             spaceResponse.setDescription(space.getDescription());
             spaceResponse.setCreatedTime(space.getCreatedTime());
             spaceResponse.setModifiedTime(space.getModifiedTime());
-            return new ResponseEntity(spaceResponse, HttpStatus.OK);
+            return new ResponseEntity<>(spaceResponse, HttpStatus.OK);
 
         }
         catch (Exception exception){
+            exception.printStackTrace();
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -63,6 +64,7 @@ public class SpaceController {
             return new ResponseEntity<>(userAccountService.getUsersBySpaceId(space_id), HttpStatus.OK);
         }
         catch (Exception exception){
+            exception.printStackTrace();
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -74,6 +76,7 @@ public class SpaceController {
             return new ResponseEntity<>(spaceService.getImages(space_id), HttpStatus.OK);
         }
         catch (Exception exception){
+            exception.printStackTrace();
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -108,6 +111,7 @@ public class SpaceController {
             return new ResponseEntity<>("The space has been deleted", HttpStatus.OK);
         }
         catch (Exception exception){
+            exception.printStackTrace();
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
