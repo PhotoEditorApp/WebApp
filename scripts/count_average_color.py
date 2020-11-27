@@ -5,7 +5,7 @@ import cv2
 
 if len(sys.argv) == 2:
     image = cv2.imread(sys.argv[1].rstrip())
-    avg_color = list(map(int, [image[:, :, i].sum() // (image.size // 3) for i in range(image.shape[-1])]))
+    avg_color = list(map(int, [image[:, :, i].sum() // (image.size // 3) for i in reversed(range(image.shape[-1]))]))
 
     const = 0x00FF0000
     shifts = [16, 8, 0]
