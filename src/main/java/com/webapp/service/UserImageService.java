@@ -240,7 +240,6 @@ public class UserImageService implements StorageService {
         Space space = spaceRepositoryOptional
                 .orElseThrow(() -> new StorageException("No space with such id: " + space_id.toString()));
 
-        // todo figure out fow to count average color
         int countedRgb = Integer.parseInt(
                 new com.webapp.imageprocessing.AverageColor(rootLocation, imageName).processing().get(0)
         );
