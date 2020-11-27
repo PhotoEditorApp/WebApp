@@ -22,7 +22,7 @@ public class Preview extends ProcessingProduct{
 
     @Override
     String getProductPath() {
-        String previewName = String.format("preview_%s.png", userImage.getName().split("\\.")[0]);
+        String previewName = String.format("preview_%s.jpg", userImage.getName().split("\\.")[0]);
         return rootLocation.resolve(previewName).normalize().toString();
     }
 

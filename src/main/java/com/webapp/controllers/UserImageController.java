@@ -1,13 +1,10 @@
 package com.webapp.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webapp.domain.UserImage;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
 import com.webapp.json.ActionMessage;
 import com.webapp.json.FileResponse;
-import com.webapp.properties.StorageProperties;
 import com.webapp.service.ImageTagService;
 import com.webapp.service.StorageService;
 import com.webapp.service.UserImageService;
@@ -21,7 +18,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 

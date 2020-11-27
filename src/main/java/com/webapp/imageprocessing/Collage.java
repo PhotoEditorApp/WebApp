@@ -23,7 +23,7 @@ public class Collage extends ProcessingProduct{
 
     @Override
     String getProductPath() {
-        String collageName = String.format("collage%d.png", new Random().nextInt());
+        String collageName = String.format("collage%d.jpg", new Random().nextInt());
         return rootLocation.resolve(collageName).normalize().toString();
     }
 
