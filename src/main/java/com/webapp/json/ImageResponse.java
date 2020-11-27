@@ -1,11 +1,7 @@
 package com.webapp.json;
 
-import com.webapp.domain.UserAccount;
 import com.webapp.domain.UserImage;
 
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -16,7 +12,7 @@ public class ImageResponse implements Serializable {
     private String path;
 
     private Date createTime;
-    private Integer average_color;
+    private Long average_color;
 
     private Long size;
     private Date modifiedTime;
@@ -33,11 +29,11 @@ public class ImageResponse implements Serializable {
         this.size = image.getSize();
         this.modifiedTime = image.getModifiedTime();
     }
-    public Integer getAverage_color() {
+    public Long getAverage_color() {
         return average_color;
     }
 
-    public void setAverage_color(Integer average_color) {
+    public void setAverage_color(Long average_color) {
         this.average_color = average_color;
     }
 

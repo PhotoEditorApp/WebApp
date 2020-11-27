@@ -13,12 +13,12 @@ public class AverageColor implements Serializable {
     @SequenceGenerator(name="image_seq", sequenceName = "image_id_seq", allocationSize = 1)
     private Long id;
 
-    private int rgb;
+    private long rgb;
 
     public AverageColor() {
     }
 
-    public AverageColor(int rgb) {
+    public AverageColor(long rgb) {
         this.rgb = rgb;
     }
 
@@ -30,11 +30,11 @@ public class AverageColor implements Serializable {
         this.id = id;
     }
 
-    public int getRgb() {
+    public long getRgb() {
         return rgb;
     }
 
-    public void setRgb(int rgb) {
+    public void setRgb(long rgb) {
         this.rgb = rgb;
     }
 
