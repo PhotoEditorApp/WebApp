@@ -7,6 +7,8 @@ import com.webapp.domain.UserImage;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
 import com.webapp.imageprocessing.Collage;
+import com.webapp.imageprocessing.Filter;
+import com.webapp.imageprocessing.Frame;
 import com.webapp.imageprocessing.Preview;
 import com.webapp.json.TagResponse;
 import com.webapp.properties.StorageProperties;
@@ -260,14 +262,39 @@ public class UserImageService implements StorageService {
         }
     }
 
+    // We don't use template method here because of Spring DI in controller (UserImageController)
     @Override
     public Resource getPreview(Long id) throws StorageException{
-        UserImage userImage = userImageRepository.findById(id)
-                .orElseThrow(() -> new StorageException("There's no image with such id: " + id.toString()));
+        UserImage userImage = getUserImage(id);
 
         String previewPath = new Preview(rootLocation, userImage).processing();
         saveInfo(userImage.getUser().getId(), userImage.getSpace().getId(), previewPath);
 
         return this.loadAsResource(Paths.get(previewPath).getFileName().toString());
+    }
+
+    @Override
+    public Resource getFilteredImage(Long image_id) throws StorageException{
+        UserImage userImage = getUserImage(image_id);
+
+        String filterPath = new Filter(rootLocation, userImage).processing();
+        saveInfo(userImage.getUser().getId(), userImage.getSpace().getId(), filterPath);
+
+        return this.loadAsResource(Paths.get(filterPath).getFileName().toString());
+    }
+
+    @Override
+    public Resource getImageWithFrame(Long image_id) throws StorageException{
+        UserImage userImage = getUserImage(image_id);
+
+        String filterPath = new Frame(rootLocation, userImage).processing();
+        saveInfo(userImage.getUser().getId(), userImage.getSpace().getId(), filterPath);
+
+        return this.loadAsResource(Paths.get(filterPath).getFileName().toString());
+    }
+
+    private UserImage getUserImage(Long image_id) throws StorageException{
+        return userImageRepository.findById(image_id)
+                .orElseThrow(() -> new StorageException("There's no image with such id: " + image_id.toString()));
     }
 }

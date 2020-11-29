@@ -90,6 +90,36 @@ public class UserImageController {
         }
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<?> applyFilterByImageId(@RequestParam Long id) {
+        Resource resource = storageService.getFilteredImage(id);
+
+        try {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/frame")
+    public ResponseEntity<?> addFrameByImageId(@RequestParam Long id) {
+        Resource resource = storageService.getImageWithFrame(id);
+
+        try {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
+    }
+
     @GetMapping("/get_preview_img_id")
     public ResponseEntity<?> getPreviewByImageId(@RequestParam Long id) {
         Resource resource = storageService.getPreview(id);

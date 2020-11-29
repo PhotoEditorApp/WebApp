@@ -3,6 +3,7 @@ package com.webapp.service;
 import com.webapp.domain.UserImage;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
+import com.webapp.imageprocessing.Frame;
 import com.webapp.json.ActionMessage;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -40,4 +42,8 @@ public interface StorageService {
             StorageException;
 
     Resource getPreview(Long ids) throws StorageException;
+
+    Resource getFilteredImage(Long image_id) throws StorageException;
+
+    Resource getImageWithFrame(Long image_id) throws StorageException;
 }
