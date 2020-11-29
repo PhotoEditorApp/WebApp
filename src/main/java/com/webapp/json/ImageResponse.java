@@ -10,6 +10,7 @@ public class ImageResponse implements Serializable {
     private String name;
     private Long user_id;
     private String path;
+    private String preview_path;
 
     private Date createTime;
     private Long average_color;
@@ -28,7 +29,9 @@ public class ImageResponse implements Serializable {
         this.createTime = image.getCreateTime();
         this.size = image.getSize();
         this.modifiedTime = image.getModifiedTime();
+        this.preview_path = image.getPreview_path();
     }
+
     public Long getAverage_color() {
         return average_color;
     }
@@ -92,5 +95,13 @@ public class ImageResponse implements Serializable {
 
     public void setModifiedTime(Date modifiedTime) {
         this.modifiedTime = modifiedTime;
+    }
+
+    public String getPreview_path() {
+        return preview_path;
+    }
+
+    public void setPreview_path(String preview_path) {
+        this.preview_path = preview_path;
     }
 }
