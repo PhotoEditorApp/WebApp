@@ -6,16 +6,12 @@ import com.webapp.domain.UserAccount;
 import com.webapp.domain.UserImage;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
-import com.webapp.imageprocessing.Collage;
-import com.webapp.imageprocessing.Filter;
-import com.webapp.imageprocessing.Frame;
-import com.webapp.imageprocessing.Preview;
+import com.webapp.imageprocessing.*;
 import com.webapp.json.TagResponse;
 import com.webapp.properties.StorageProperties;
 import com.webapp.repositories.AverageColorRepository;
 import com.webapp.repositories.SpaceRepository;
 import com.webapp.repositories.UserImageRepository;
-
 import com.webapp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -26,8 +22,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
-import java.nio.file.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -277,7 +277,8 @@ public class UserImageService implements StorageService {
     public Resource getFilteredImage(Long image_id) throws StorageException{
         UserImage userImage = getUserImage(image_id);
 
-        String filterPath = new Filter(rootLocation, userImage).processing();
+        // todo decide strategy for getting filter info!!!
+        String filterPath = new BlurFilter(rootLocation, userImage).processing();
         saveInfo(userImage.getUser().getId(), userImage.getSpace().getId(), filterPath);
 
         return this.loadAsResource(Paths.get(filterPath).getFileName().toString());
@@ -287,7 +288,8 @@ public class UserImageService implements StorageService {
     public Resource getImageWithFrame(Long image_id) throws StorageException{
         UserImage userImage = getUserImage(image_id);
 
-        String filterPath = new Frame(rootLocation, userImage).processing();
+        // todo decide strategy for getting frame info!!!
+        String filterPath = new Frame(rootLocation, userImage, userImage).processing();
         saveInfo(userImage.getUser().getId(), userImage.getSpace().getId(), filterPath);
 
         return this.loadAsResource(Paths.get(filterPath).getFileName().toString());

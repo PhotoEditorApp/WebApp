@@ -4,11 +4,10 @@ import com.webapp.domain.UserImage;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
-public class Filter extends ProcessingProduct{
-    private final UserImage userImage;
+public abstract class Filter extends ProcessingProduct{
+    protected final UserImage userImage;
 
     public Filter(Path rootLocation, UserImage userImage) {
         super(rootLocation);
@@ -26,10 +25,5 @@ public class Filter extends ProcessingProduct{
         return rootLocation.resolve(collageName).normalize().toString();
     }
 
-    @Override
-    List<String> prepareArguments() {
-        return new ArrayList<>(
-            List.of(rootLocation.resolve(userImage.getName()).normalize().toAbsolutePath().toString())
-        );
-    }
+    abstract List<String> prepareArguments();
 }
