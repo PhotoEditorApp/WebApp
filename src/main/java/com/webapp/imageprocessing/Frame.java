@@ -9,9 +9,9 @@ import java.util.List;
 
 public class Frame extends ProcessingProduct{
     private final UserImage userImage;
-    private final UserImage frame;
+    private final com.webapp.domain.Frame frame;
 
-    public Frame(Path rootLocation, UserImage userImage, UserImage frame) {
+    public Frame(Path rootLocation, UserImage userImage, com.webapp.domain.Frame frame) {
         super(rootLocation);
         this.userImage = userImage;
         this.frame = frame;

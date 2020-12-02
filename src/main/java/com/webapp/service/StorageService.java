@@ -1,18 +1,14 @@
 package com.webapp.service;
 
 import com.webapp.domain.UserImage;
+import com.webapp.enums.Filters;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
-import com.webapp.imageprocessing.Frame;
-import com.webapp.json.ActionMessage;
 import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -32,18 +28,22 @@ public interface StorageService {
 
     Resource getResource(Long imageId);
 
+    Resource getFrameResource(Long frameId);
+
     void editInfo(UserImage userImage) throws StorageException;
 
     void deleteImage(Long id) throws IOException, FileNotFoundException;
 
     Resource getCollage(List<Long> ids) throws StorageException;
 
-    void saveInfo(Long user_id, Long space_id, String ImagePath) throws IllegalArgumentException,
+    void saveInfo(Long userId, Long spaceId, String imagePath) throws IllegalArgumentException,
             StorageException;
 
     Resource getPreview(Long ids) throws StorageException;
 
-    Resource getFilteredImage(Long image_id) throws StorageException;
+    byte[] getFilteredImage(Long imageId, Filters filter) throws StorageException;
 
-    Resource getImageWithFrame(Long image_id) throws StorageException;
+    byte[] getImageWithFrame(Long imageId, Long frameId) throws StorageException;
+
+    void saveFrameInfo(String name);
 }

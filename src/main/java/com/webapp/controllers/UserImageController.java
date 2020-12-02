@@ -1,6 +1,7 @@
 package com.webapp.controllers;
 
 import com.webapp.domain.UserImage;
+import com.webapp.enums.Filters;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
 import com.webapp.json.ActionMessage;
@@ -91,33 +92,25 @@ public class UserImageController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<?> applyFilterByImageId(@RequestParam Long id) {
-        Resource resource = storageService.getFilteredImage(id);
+    public ResponseEntity<?> applyFilterByImageId(@RequestParam Long id,
+                                                  @RequestParam Filters filter) {
+        byte[] bytesToSend = storageService.getFilteredImage(id, filter);
 
-        try {
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ActionMessage(e.getMessage()));
-        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        String.format("attachment; filename=\"filtered_img_%d\"", id))
+                .body(bytesToSend);
     }
 
     @GetMapping("/frame")
-    public ResponseEntity<?> addFrameByImageId(@RequestParam Long id) {
-        Resource resource = storageService.getImageWithFrame(id);
+    public ResponseEntity<?> addFrameByImageId(@RequestParam Long id,
+                                               @RequestParam Long frameId) {
+        byte[] bytesToSend = storageService.getImageWithFrame(id, frameId);
 
-        try {
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ActionMessage(e.getMessage()));
-        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        String.format("attachment; filename=\"frame_%d_%d\"", id, frameId))
+                .body(bytesToSend);
     }
 
     @GetMapping("/get_preview_img_id")
@@ -207,5 +200,39 @@ public class UserImageController {
 //        return Arrays.stream(files)
 //                .map(this::uploadImage)
 //                .collect(Collectors.toList());
+    }
+
+    @PostMapping("/upload_frame")
+    public ResponseEntity<?> uploadFrame(@RequestParam("frame") MultipartFile file) {
+        String name = storageService.store(file);
+        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/download/")
+                .path(name)
+                .toUriString();
+
+        try {
+            storageService.saveFrameInfo(name);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
+
+        return ResponseEntity.ok()
+                .body(new FileResponse(name, uri, file.getContentType(), file.getSize()));
+    }
+
+    @GetMapping("/get_frame_id")
+    public ResponseEntity<?> getFrameById(@RequestParam Long id) {
+        Resource resource = storageService.getFrameResource(id);
+
+        try {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
     }
 }
