@@ -174,23 +174,13 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public void editInfo(UserImage userImage) throws StorageException{
-        Optional<UserImage> userImageOriginal = userImageRepository.findById(userImage.getId());
+    public void editInfo(Long imageId, String newName) throws StorageException{
+        UserImage userImageOriginal = userImageRepository.findById(imageId)
+                .orElseThrow(() -> new StorageException("Could not find user by id: " + imageId.toString()));
 
-        if (userImageOriginal.isPresent()){
-            UserImage userImageEdited = userImageOriginal.get();
-            userImageEdited.setAverageColor(userImage.getAverageColor());
-            userImageEdited.setCreateTime(userImage.getCreateTime());
-            userImageEdited.setModifiedTime(userImage.getModifiedTime());
-            userImageEdited.setName(userImage.getName());
-            userImageEdited.setUser(userImage.getUser());
-            userImageEdited.setPath(userImage.getPath());
-
-            userImageRepository.save(userImageEdited);
-        }else {
-            throw new StorageException(
-                    "Could not find user by id: " + userImage.getId().toString());
-        }
+        userImageOriginal.getSpace().setModifiedTime(new Date(System.currentTimeMillis()));
+        userImageOriginal.setName(newName);
+        userImageRepository.save(userImageOriginal);
     }
 
     // this method duplicates getResource because these query applies to another tables
@@ -214,6 +204,7 @@ public class UserImageService implements StorageService {
         if (userImageOptional.isPresent()){
             UserImage userImage = userImageOptional.get();
 
+            userImage.getSpace().setModifiedTime(new Date(System.currentTimeMillis()));
             Files.delete(Paths.get(rootLocation.resolve(userImage.getName()).toString()));
 
             userImageRepository.delete(userImage);
@@ -264,13 +255,15 @@ public class UserImageService implements StorageService {
         AverageColor averageColor = averageColorOptional.orElseGet(() -> new AverageColor(countedRgb));
 
         try {
-            UserImage userImage = new UserImage(user, imagePath,
-                    new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()),
+            Date time = new Date(System.currentTimeMillis());
+            UserImage userImage = new UserImage(user, imagePath, time, time,
                     Files.size(Paths.get(imagePath)), averageColor,
                     imageName, space);
 
             String previewPath = new Preview(rootLocation, userImage).processing();
             userImage.setPreview_path(previewPath);
+            userImage.getSpace().setModifiedTime(new Date(System.currentTimeMillis()));
+
             userImageRepository.save(userImage);
         } catch (IOException e) {
             throw new StorageException(e.getMessage());

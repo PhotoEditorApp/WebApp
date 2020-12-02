@@ -30,7 +30,7 @@ public interface StorageService {
 
     Resource getFrameResource(Long frameId);
 
-    void editInfo(UserImage userImage) throws StorageException;
+    void editInfo(Long imageId, String newName) throws StorageException;
 
     void deleteImage(Long id) throws IOException, FileNotFoundException;
 

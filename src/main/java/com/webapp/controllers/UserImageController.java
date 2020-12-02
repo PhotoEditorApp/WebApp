@@ -162,9 +162,10 @@ public class UserImageController {
     }
 
     @PutMapping("/edit_info")
-    public ResponseEntity<ActionMessage> editImageInfo(@RequestBody UserImage userImage) {
+    public ResponseEntity<ActionMessage> editImageInfo(@RequestParam Long imageId,
+                                                       @RequestParam String newName) {
         try {
-            storageService.editInfo(userImage);
+            storageService.editInfo(imageId, newName);
         } catch (StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
