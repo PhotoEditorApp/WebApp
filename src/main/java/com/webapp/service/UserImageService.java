@@ -195,8 +195,18 @@ public class UserImageService implements StorageService {
         UserImage userImageOriginal = userImageRepository.findById(imageId)
                 .orElseThrow(() -> new StorageException("Could not find user by id: " + imageId.toString()));
 
+        Path oldImg = Paths.get(rootLocation.resolve(userImageOriginal.getName()).toString());
+        Path newImg = Paths.get(rootLocation.resolve(newName).toString());
+        try {
+            Files.move(oldImg, newImg);
+        } catch (IOException e) {
+            throw new StorageException(e.getMessage());
+        }
+
         userImageOriginal.getSpace().setModifiedTime(new Date(System.currentTimeMillis()));
         userImageOriginal.setName(newName);
+        userImageOriginal.setPath(rootLocation.resolve(newName).normalize().toString());
+
         userImageRepository.save(userImageOriginal);
     }
 
