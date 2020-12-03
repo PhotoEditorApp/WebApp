@@ -4,6 +4,7 @@ import com.webapp.compositeKeys.ImageTagId;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "image_tag")
@@ -12,20 +13,16 @@ public class ImageTag implements Serializable {
     ImageTagId imageTagId;
 
     @ManyToOne
-    @MapsId("tagId")
-    @JoinColumn(name = "user_tag_id")
-    private UserTag tag;
-    @ManyToOne
     @MapsId("imageId")
     @JoinColumn(name = "image_id")
     private UserImage image;
 
+
     public ImageTag() {
     }
 
-    public ImageTag(UserImage userImage, UserTag userTag) {
-        this.imageTagId = new ImageTagId(userImage.getId(), userTag.getId());
-        this.tag = userTag;
+    public ImageTag(UserImage userImage, String tagName) {
+        this.imageTagId = new ImageTagId(userImage.getId(), tagName);
         this.image = userImage;
     }
 
@@ -37,14 +34,6 @@ public class ImageTag implements Serializable {
         this.imageTagId = imageTagId;
     }
 
-    public UserTag getTag() {
-        return tag;
-    }
-
-    public void setTag(UserTag tag) {
-        this.tag = tag;
-    }
-
     public UserImage getImage() {
         return image;
     }
@@ -53,13 +42,14 @@ public class ImageTag implements Serializable {
         this.image = image;
     }
 
-    //    @Override
+//
+//        @Override
 //    public boolean equals(Object o) {
 //        if (this == o) return true;
 //        if (o == null || getClass() != o.getClass()) return false;
 //        ImageTag imageTag = (ImageTag) o;
 //        return Objects.equals(tagId, imageTag.tagId) &&
-//                Objects.equals(imageId, imageTag.imageId);
+//                Objects.equals(, imageTag.imageId);
 //    }
 
 //    @Override

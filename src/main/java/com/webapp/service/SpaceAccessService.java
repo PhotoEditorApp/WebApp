@@ -5,6 +5,7 @@ import com.webapp.domain.Space;
 import com.webapp.domain.SpaceAccess;
 import com.webapp.domain.UserAccount;
 import com.webapp.enums.AccessType;
+import com.webapp.repositories.ImageTagRepository;
 import com.webapp.repositories.SpaceAccessRepository;
 import com.webapp.repositories.SpaceRepository;
 import com.webapp.repositories.UserRepository;
@@ -16,10 +17,11 @@ import java.util.Optional;
 @Service
 public class SpaceAccessService {
     @Lazy
-    final SpaceAccessRepository spaceAccessRepository;
-    final UserRepository userRepository;
-    final SpaceRepository spaceRepository;
-    final UserImageService userImageService;
+    final private SpaceAccessRepository spaceAccessRepository;
+    final private UserRepository userRepository;
+    final private SpaceRepository spaceRepository;
+    final private UserImageService userImageService;
+    final private ImageTagRepository imageTagRepository;
 
     public UserRepository getUserRepository() {
         return userRepository;
@@ -30,14 +32,15 @@ public class SpaceAccessService {
     }
 
     public SpaceAccessService(SpaceAccessRepository spaceAccessRepository, UserRepository userRepository,
-                              SpaceRepository spaceRepository, UserImageService userImageService) {
+                              SpaceRepository spaceRepository, UserImageService userImageService, ImageTagRepository imageTagRepository) {
         this.spaceAccessRepository = spaceAccessRepository;
         this.userRepository = userRepository;
         this.spaceRepository = spaceRepository;
         this.userImageService = userImageService;
+        this.imageTagRepository = imageTagRepository;
     }
 
-    // check if user has definite access to the image
+    // check if user has access to the image
     public boolean isUserHasAccessToImage(Long userId, Long imageId, AccessType type) throws Exception {
         // find space_id of image
         Long spaceId = userImageService.getSpace(imageId).getId();
@@ -80,7 +83,18 @@ public class SpaceAccessService {
         spaceAccessRepository.save(spaceAccess);
     }
 
+    // delete space access and image tags
     public void delete(SpaceAccess spaceAccess) {
+        // delete tags
+//        spaceAccess.getSpace().getUserImages()
+//                .forEach(userImage -> userImage.getImageTags()
+//                        .forEach(imageTag -> {
+//                            if (imageTag.getTag().getUser().equals(spaceAccess.getUser())){
+//                                imageTagRepository.deleteByTag(imageTag.getTag());
+//                            }
+//                        }));
+
+        // delete space acess
         spaceAccessRepository.delete(spaceAccess);
     }
 

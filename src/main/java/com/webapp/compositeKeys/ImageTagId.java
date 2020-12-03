@@ -1,34 +1,39 @@
 package com.webapp.compositeKeys;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 public class ImageTagId implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private Long tagId;
+
+    @Column(name="tag_name")
+    private String tagName;
+    @Column(name="image_id")
     private Long imageId;
 
 
     public ImageTagId() {
     }
 
-    public ImageTagId(Long imageId, Long tagId) {
+    public ImageTagId(Long imageId, String tagName) {
         this.imageId = imageId;
-        this.tagId = tagId;
+        this.tagName = tagName;
     }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
 
-    public Long getTagId() {
-        return tagId;
+    public String getTagName() {
+        return tagName;
     }
 
-    public void setTagId(Long tagId) {
-        this.tagId = tagId;
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
     }
 
     public Long getImageId() {
@@ -37,5 +42,20 @@ public class ImageTagId implements Serializable {
 
     public void setImageId(Long imageId) {
         this.imageId = imageId;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ImageTagId that = (ImageTagId) o;
+        return imageId.equals(that.imageId) &&
+                tagName.equals(that.tagName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(imageId, tagName);
     }
 }

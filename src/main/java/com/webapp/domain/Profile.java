@@ -1,10 +1,14 @@
 package com.webapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.context.annotation.Lazy;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Table(name="profile")
+@JsonIgnoreProperties({"userAccount"})
 public class Profile  implements Serializable {
     @Id
     private Long id;
@@ -14,7 +18,7 @@ public class Profile  implements Serializable {
     private String email;
     private Boolean acceptTermsOfService;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id")
     @MapsId
     private UserAccount userAccount;

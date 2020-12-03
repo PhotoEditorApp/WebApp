@@ -16,16 +16,6 @@ public class UserTag implements Serializable {
     @ManyToOne
     @JoinColumn(name="user_id")
     private UserAccount user;
-    @OneToMany(mappedBy="tag")
-    private Set<ImageTag> imageTags;
-
-    public Set<ImageTag> getImageTags() {
-        return imageTags;
-    }
-
-    public void setImageTags(Set<ImageTag> imageTags) {
-        this.imageTags = imageTags;
-    }
 
     public UserTag() {
     }

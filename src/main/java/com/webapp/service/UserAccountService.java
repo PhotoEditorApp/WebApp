@@ -91,7 +91,6 @@ public class UserAccountService implements UserDetailsService {
         if (userAccount == null) {
             return false;
         }
-
         userAccount.setActivationCode(null);
         userAccount.setEnabled(true);
         userAccount.setRegistration_time(
@@ -99,6 +98,10 @@ public class UserAccountService implements UserDetailsService {
         );
         userRepository.save(userAccount);
         return true;
+    }
+
+    public boolean exists(Long user_id){
+        return userRepository.existsById(user_id);
     }
 
     // get user by id

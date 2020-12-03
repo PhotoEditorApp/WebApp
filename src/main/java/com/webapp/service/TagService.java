@@ -4,6 +4,7 @@ import com.webapp.domain.UserAccount;
 import com.webapp.domain.UserTag;
 import com.webapp.json.TagResponse;
 import com.webapp.repositories.TagRepository;
+import io.swagger.annotations.Tag;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,10 +31,27 @@ public class TagService {
         return tagRepository.findById(tagId);
     }
 
+
+
     public Optional<UserTag> findUserTag(Long userId, String tagName) throws Exception{
         Optional<UserAccount> userAccount = userAccountService.findById(userId);
         if (userAccount.isPresent()) {
             return tagRepository.findByUserAndName(userAccount.get(), tagName);
+        }
+        else{
+            throw new Exception("cannot find user");
+        }
+    }
+
+    public UserTag getByName(Long userId, String tagName) throws Exception {
+        Optional<UserAccount> userAccount = userAccountService.findById(userId);
+        if (userAccount.isPresent()) {
+            Optional<UserTag> tag =  tagRepository.findByUserAndName(userAccount.get(), tagName);
+            if (tag.isPresent()){
+                return tag.get();}
+            else{
+                throw new Exception("cannot find tag");
+            }
         }
         else{
             throw new Exception("cannot find user");
@@ -72,29 +90,14 @@ public class TagService {
         }
     }
 
+    // delete tag of user
+    public void delete(Long userId, String tagName) throws Exception {
+        Optional<UserAccount> userAccount = userAccountService.findById(userId);
+        userAccount.orElseThrow(() -> new Exception("cannot find user"));
+        tagRepository.deleteUserTagByUserAndName(userAccount.get(), tagName);
+    }
 
-//    // get image's tags
-//    public ArrayList<TagResponse> getTagsByImage(Long imageId) throws Exception {
-//        Optional<UserImage> userImage = imageRepository.findById(imageId);
-//        if (userImage.isPresent()){
-//            ArrayList<TagResponse>  tagResponses = new ArrayList<>();
-//            userImage.get().getImageTags()
-//                    .forEach(imageTag -> tagResponses.add(new TagResponse(imageTag.getTag())));
-//            return tagResponses;
-//        }
-//        else{
-//            throw new Exception("cannot find image");
-//        }
-//    }
-//
-//
-//    // get all tags of image
-//    public ArrayList<TagResponse> getTagsByImage(Long imageId) throws Exception {
-//        ArrayList<TagResponse> tagResponses = new ArrayList<>();
-//        imageService.getTagsByImage(imageId)
-//                   .forEach(imageTag -> tagResponses.add(new TagResponse(imageTag)));
-//        return tagResponses;
-//
-//    }
+
+
 
 }

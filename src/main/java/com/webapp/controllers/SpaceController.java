@@ -5,6 +5,7 @@ import com.webapp.domain.UserAccount;
 //import com.webapp.json.UserSpacesMessage;
 //import com.webapp.repositories.SpaceRepository;
 //import com.webapp.service.SpaceService;
+import com.webapp.enums.AccessType;
 import com.webapp.json.CreateSpaceRequest;
 import com.webapp.json.SpaceResponse;
 import com.webapp.service.SpaceService;
@@ -58,8 +59,8 @@ public class SpaceController {
     }
 
     // get all users, which are connected with space
-    @GetMapping("/user")
-    public HttpEntity<? extends Serializable> getUsersBySpace(@RequestParam Long space_id){
+    @GetMapping("/{space_id}/user")
+    public HttpEntity<? extends Serializable> getUsersBySpace(@PathVariable Long space_id){
         try {
             return new ResponseEntity<>(userAccountService.getUsersBySpaceId(space_id), HttpStatus.OK);
         }
@@ -69,6 +70,8 @@ public class SpaceController {
         }
     }
 
+
+
     // get all images, which are contained by space
     @GetMapping("/{space_id}/image")
     public ResponseEntity<? extends Serializable> getImagesBySpace(@PathVariable Long space_id){
@@ -76,7 +79,6 @@ public class SpaceController {
             return new ResponseEntity<>(spaceService.getImages(space_id), HttpStatus.OK);
         }
         catch (Exception exception){
-            exception.printStackTrace();
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -102,17 +104,8 @@ public class SpaceController {
        }
     }
 
-    // delete space and all spaceAccess, which are connected with it
-    @Transactional
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteSpace(@PathVariable Long id){
-        try {
-            spaceService.deleteById(id);
-            return new ResponseEntity<>("The space has been deleted", HttpStatus.OK);
-        }
-        catch (Exception exception){
-            exception.printStackTrace();
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
+
+
+
+
 }

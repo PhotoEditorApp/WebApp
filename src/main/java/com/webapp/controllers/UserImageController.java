@@ -8,6 +8,7 @@ import com.webapp.json.ActionMessage;
 import com.webapp.json.FileResponse;
 import com.webapp.service.ImageTagService;
 import com.webapp.service.StorageService;
+import com.webapp.service.TagService;
 import com.webapp.service.UserImageService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -29,32 +30,26 @@ public class UserImageController {
     private final StorageService storageService;
     private final UserImageService imageService;
     private final ImageTagService imageTagService;
+    private final TagService tagService;
 
-    public UserImageController(StorageService storageService, UserImageService imageService,  ImageTagService imageTagService) {
+    public UserImageController(StorageService storageService, UserImageService imageService, ImageTagService imageTagService, TagService tagService) {
         this.storageService = storageService;
         this.imageService = imageService;
         this.imageTagService = imageTagService;
+        this.tagService = tagService;
     }
+
+
+//    @DeleteMapping("/{image_id}/tag")
+//    public ResponseEntity<?> deleteImageTagOfImage(@PathVariable Long image_id, @RequestParam String tag_name) {
+//        imageTagService.delete();
+//    }
 
     // get all tags of image
     @GetMapping("/{image_id}/tag")
     public ResponseEntity<?> getTagsByImage(@PathVariable Long image_id) {
         try {
             return new ResponseEntity<>(imageService.getTagsByImage(image_id), HttpStatus.OK);
-
-        } catch (Exception exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
-    // join user tag and image
-    @PutMapping("/{image_id}/tag")
-    public ResponseEntity<?> c(@PathVariable Long image_id,
-                               @RequestParam String tag_name,
-                               @RequestParam Long user_id) {
-        try {
-            imageTagService.save(image_id, tag_name, user_id);
-            return new ResponseEntity<>("tag successfully added", HttpStatus.OK);
 
         } catch (Exception exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
@@ -148,6 +143,7 @@ public class UserImageController {
                 .body(new ActionMessage("There's no id to make a collage"));
     }
 
+    // TODO нужно удалять и теги, связанные с изображением
     @DeleteMapping("/delete_image")
     public ResponseEntity<ActionMessage> deleteImageById(@RequestParam Long id) {
         try {
@@ -221,6 +217,7 @@ public class UserImageController {
         return ResponseEntity.ok()
                 .body(new FileResponse(name, uri, file.getContentType(), file.getSize()));
     }
+
 
     @GetMapping("/get_frame_id")
     public ResponseEntity<?> getFrameById(@RequestParam Long id) {

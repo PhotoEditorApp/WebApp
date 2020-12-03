@@ -1,5 +1,8 @@
 package com.webapp.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.springframework.context.annotation.Lazy;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -20,7 +23,7 @@ public class UserAccount implements Serializable {
     private boolean enabled;
     private String registration_time;
 
-    @OneToOne(mappedBy = "userAccount")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "userAccount")
     private Profile profile;
 
     public Profile getProfile() {

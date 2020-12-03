@@ -15,34 +15,33 @@ public class UserImage implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id")
     private UserAccount user;
+    @OneToMany(mappedBy="image")
+    private Set<ImageTag> tags = new HashSet<>();
     private String path;
-
     private Date createTime;
     private Long size;
     private Date modifiedTime;
     private String preview_path;
-
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "avg_color_id", referencedColumnName = "id")
     private AverageColor averageColor;
-
     @ManyToOne
     @JoinColumn(name="space_id")
     private Space space;
 
-    @OneToMany(mappedBy="image")
-    private Set<ImageTag> imageTags = new HashSet<>();
-
-    public Set<ImageTag> getImageTags() {
-        return imageTags;
+    public Set<ImageTag> getTags() {
+        return tags;
     }
 
-    public void setImageTags(Set<ImageTag> imageTags) {
-        this.imageTags = imageTags;
+    public void setTags(Set<ImageTag> tags) {
+        this.tags = tags;
+    }
+
+    public void setSize(Long size) {
+        this.size = size;
     }
 
     public Space getSpace() {
@@ -112,10 +111,6 @@ public class UserImage implements Serializable {
 
     public Long getSize() {
         return size;
-    }
-
-    public void setSize(Long size) {
-        this.size = size;
     }
 
     public Date getModifiedTime() {

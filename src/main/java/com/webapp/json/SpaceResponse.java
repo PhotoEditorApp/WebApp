@@ -19,7 +19,7 @@ public class SpaceResponse implements Serializable{
 
     public SpaceResponse(Space space) {
         this.id = space.getId();
-        this.userId = space.getId();
+        this.userId = space.getUser().getId();
         this.name = space.getName();
         this.description = space.getDescription();
         this.createdTime = space.getCreatedTime();

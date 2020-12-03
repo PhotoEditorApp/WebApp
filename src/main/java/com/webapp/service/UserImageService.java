@@ -64,13 +64,13 @@ public class UserImageService implements StorageService {
     }
 
     // get image's tags
-    public ArrayList<TagResponse> getTagsByImage(Long imageId) throws Exception {
+    public ArrayList<String> getTagsByImage(Long imageId) throws Exception {
         Optional<UserImage> userImage = userImageRepository.findById(imageId);
         if (userImage.isPresent()){
-            ArrayList<TagResponse>  tagResponses = new ArrayList<>();
-            userImage.get().getImageTags()
-                           .forEach(imageTag -> tagResponses.add(new TagResponse(imageTag.getTag())));
-            return tagResponses;
+            ArrayList<String>  tags = new ArrayList<>();
+            userImage.get().getTags()
+                           .forEach(imageTag -> tags.add(imageTag.getImageTagId().getTagName()));
+            return tags;
         }
         else{
             throw new Exception("cannot find image");
@@ -285,20 +285,21 @@ public class UserImageService implements StorageService {
     public byte[] getFilteredImage(Long imageId, Filters filter) throws StorageException{
         UserImage userImage = getUserImage(imageId);
 
-        String filterPath = switch (filter) {
-            case WB -> new WhiteAndBlackFilter(rootLocation, userImage).processing();
-            case SHARP -> new SharpeningFilter(rootLocation, userImage).processing();
-            case BLUR -> new BlurFilter(rootLocation, userImage).processing();
-        };
+//        String filterPath = switch (filter) {
+//            case WB -> new WhiteAndBlackFilter(rootLocation, userImage).processing();
+//            case SHARP -> new SharpeningFilter(rootLocation, userImage).processing();
+//            case BLUR -> new BlurFilter(rootLocation, userImage).processing();
+//        };
 
-        try {
-            byte[] bytesToSend = Files.readAllBytes(Paths.get(filterPath));
-            Files.delete(Paths.get(filterPath));
-
-            return bytesToSend;
-        } catch (IOException e) {
-            throw new StorageException(e.getMessage());
-        }
+//        try {
+//            byte[] bytesToSend = Files.readAllBytes(Paths.get(filterPath));
+//            Files.delete(Paths.get(filterPath));
+//
+//            return bytesToSend;
+//        } catch (IOException e) {
+//            throw new StorageException(e.getMessage());
+//        }
+        return null;
     }
 
     @Override
