@@ -23,12 +23,14 @@ public class UserController {
     private final SpaceService spaceService;
     private final TagService tagService;
     private final ImageTagService imageTagService;
+    private final ImageRatingService imageRaitingService;
 
-    public UserController(UserAccountService userAccountService, SpaceService spaceService, TagService tagService, ImageTagService imageTagService) {
+    public UserController(UserAccountService userAccountService, SpaceService spaceService, TagService tagService, ImageTagService imageTagService, ImageRatingService imageRaitingService) {
         this.userAccountService = userAccountService;
         this.spaceService = spaceService;
         this.tagService = tagService;
         this.imageTagService = imageTagService;
+        this.imageRaitingService = imageRaitingService;
     }
 
     // sign up user by email and password
@@ -169,5 +171,34 @@ public class UserController {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
+    // update or create rating of image by some user
+    @Transactional
+    @PutMapping("/{user_id}/image/{image_id}/rating")
+    public ResponseEntity<?> addImageRating(@PathVariable Long user_id,
+                                            @PathVariable Long image_id,
+                                            @RequestParam Long rating_number){
+        try {
+            imageRaitingService.save(image_id, user_id, rating_number);
+            return new ResponseEntity<>("rating was successfully updated", HttpStatus.OK);
+
+        } catch (Exception exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+//    @DeleteMapping("/{user_id}/image/{image_id}/rating")
+//    public ResponseEntity<?> deleteImageRating(@PathVariable Long user_id,
+//                                            @PathVariable Long image_id){
+//        try {
+//            imageRaitingService.delete(user_id, image_id);
+//            return new ResponseEntity<>("rating was successfully deleted", HttpStatus.OK);
+//
+//        } catch (Exception exception) {
+//            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+//        }
+//
+//    }
 
 }

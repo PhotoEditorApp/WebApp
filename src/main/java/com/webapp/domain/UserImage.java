@@ -1,11 +1,9 @@
 package com.webapp.domain;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -23,6 +21,16 @@ public class UserImage implements Serializable {
     private String path;
     private Date createTime;
     private Long size;
+    private Float rating;
+
+    public Float getRating() {
+        return rating;
+    }
+
+    public void setRating(Float rating) {
+        this.rating = rating;
+    }
+
     private Date modifiedTime;
     private String preview_path;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
@@ -31,6 +39,16 @@ public class UserImage implements Serializable {
     @ManyToOne
     @JoinColumn(name="space_id")
     private Space space;
+    @OneToMany(mappedBy = "image")
+    private Set<ImageRating> ratings = new HashSet();
+
+    public Set<ImageRating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Set<ImageRating> ratings) {
+        this.ratings = ratings;
+    }
 
     public Set<ImageTag> getTags() {
         return tags;
