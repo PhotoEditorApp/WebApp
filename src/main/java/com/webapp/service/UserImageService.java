@@ -1,15 +1,12 @@
 package com.webapp.service;
 
 import com.webapp.domain.AverageColor;
-import com.webapp.domain.Space;
-import com.webapp.domain.UserAccount;
-import com.webapp.domain.UserImage;
+import com.webapp.domain.Frame;
+import com.webapp.domain.*;
 import com.webapp.enums.Filters;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
 import com.webapp.imageprocessing.*;
-import com.webapp.domain.Frame;
-import com.webapp.json.TagResponse;
 import com.webapp.properties.StorageProperties;
 import com.webapp.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -295,21 +292,20 @@ public class UserImageService implements StorageService {
     public byte[] getFilteredImage(Long imageId, Filters filter) throws StorageException{
         UserImage userImage = getUserImage(imageId);
 
-//        String filterPath = switch (filter) {
-//            case WB -> new WhiteAndBlackFilter(rootLocation, userImage).processing();
-//            case SHARP -> new SharpeningFilter(rootLocation, userImage).processing();
-//            case BLUR -> new BlurFilter(rootLocation, userImage).processing();
-//        };
+        String filterPath = switch (filter) {
+            case WB -> new WhiteAndBlackFilter(rootLocation, userImage).processing();
+            case SHARP -> new SharpeningFilter(rootLocation, userImage).processing();
+            case BLUR -> new BlurFilter(rootLocation, userImage).processing();
+        };
 
-//        try {
-//            byte[] bytesToSend = Files.readAllBytes(Paths.get(filterPath));
-//            Files.delete(Paths.get(filterPath));
-//
-//            return bytesToSend;
-//        } catch (IOException e) {
-//            throw new StorageException(e.getMessage());
-//        }
-        return null;
+        try {
+            byte[] bytesToSend = Files.readAllBytes(Paths.get(filterPath));
+            Files.delete(Paths.get(filterPath));
+
+            return bytesToSend;
+        } catch (IOException e) {
+            throw new StorageException(e.getMessage());
+        }
     }
 
     @Override
