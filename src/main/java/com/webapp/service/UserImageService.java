@@ -1,12 +1,15 @@
 package com.webapp.service;
 
+import com.webapp.domain.*;
 import com.webapp.domain.AverageColor;
 import com.webapp.domain.Frame;
 import com.webapp.domain.*;
+import com.webapp.domain.Frame;
 import com.webapp.enums.Filters;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
 import com.webapp.imageprocessing.*;
+import com.webapp.json.TagResponse;
 import com.webapp.properties.StorageProperties;
 import com.webapp.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +61,25 @@ public class UserImageService implements StorageService {
         else{
             throw new Exception("cannot find image");
         }
+    }
+
+    public Float getRatingByImage(Long imageId) throws Exception {
+        Float rating = (float) 0;
+
+        Optional<UserImage> userImage = findById(imageId);
+        userImage.orElseThrow(() -> new Exception("cannot find image"));
+
+        int size = userImage.get().getRatings().size();
+        if (size == 0){
+            size = 1;
+        }
+
+        for (ImageRating imageRating :userImage.get().getRatings()){
+            rating += imageRating.getRating();
+        }
+        rating = rating / size;
+
+        return rating;
     }
 
     // get image's tags

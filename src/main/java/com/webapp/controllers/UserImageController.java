@@ -39,12 +39,6 @@ public class UserImageController {
         this.tagService = tagService;
     }
 
-
-//    @DeleteMapping("/{image_id}/tag")
-//    public ResponseEntity<?> deleteImageTagOfImage(@PathVariable Long image_id, @RequestParam String tag_name) {
-//        imageTagService.delete();
-//    }
-
     // get all tags of image
     @GetMapping("/{image_id}/tag")
     public ResponseEntity<?> getTagsByImage(@PathVariable Long image_id) {
@@ -63,8 +57,7 @@ public class UserImageController {
         try {
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
+                            "attachment; filename=\"" + resource.getFilename() + "\"").body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
