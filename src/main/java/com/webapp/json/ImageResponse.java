@@ -14,6 +14,7 @@ public class ImageResponse implements Serializable {
 
     private Date createTime;
     private Long average_color;
+    private Float rating;
 
     private Long size;
     private Date modifiedTime;
@@ -30,6 +31,7 @@ public class ImageResponse implements Serializable {
         this.size = image.getSize();
         this.modifiedTime = image.getModifiedTime();
         this.preview_path = image.getPreview_path();
+        this.rating = image.getRating();
     }
 
     public Long getAverage_color() {
