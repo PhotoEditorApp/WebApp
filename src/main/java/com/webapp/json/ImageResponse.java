@@ -106,4 +106,12 @@ public class ImageResponse implements Serializable {
     public void setPreview_path(String preview_path) {
         this.preview_path = preview_path;
     }
+
+    public Float getRating() {
+        return rating;
+    }
+
+    public void setRating(Float rating) {
+        this.rating = rating;
+    }
 }
