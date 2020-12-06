@@ -44,11 +44,12 @@ public abstract class ProcessingResult {
                     .lines()
                     .toString();
 
-            if (!errorStr.contains("java.util.stream.ReferencePipeline"))
-                throw new IOException(errorStr);
+            var returnValue = process.waitFor();
 
-            process.waitFor();
-
+            if (returnValue != 0)
+                throw new InterruptedException(String.format("Return code is: %d\n", returnValue)
+                        + errorStr + "\n" + command.stream().reduce(String::concat) + "\n"
+                        + result);
         } catch (IOException | InterruptedException e) {
             throw new StorageException(e.getMessage());
         }

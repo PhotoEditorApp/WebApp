@@ -277,13 +277,13 @@ public class UserImageService implements StorageService {
         Space space = spaceRepositoryOptional
                 .orElseThrow(() -> new StorageException("No space with such id: " + spaceId.toString()));
 
-        long countedRgb = Long.parseLong(
-                new com.webapp.imageprocessing.AverageColor(rootLocation, imageName).processing().get(0)
-        );
-        Optional<AverageColor> averageColorOptional = averageColorRepository.findByRgb(countedRgb);
-        AverageColor averageColor = averageColorOptional.orElseGet(() -> new AverageColor(countedRgb));
-
         try {
+            long countedRgb = Long.parseLong(
+                    new com.webapp.imageprocessing.AverageColor(rootLocation, imageName).processing().get(0)
+            );
+            Optional<AverageColor> averageColorOptional = averageColorRepository.findByRgb(countedRgb);
+            AverageColor averageColor = averageColorOptional.orElseGet(() -> new AverageColor(countedRgb));
+
             Date time = new Date(System.currentTimeMillis());
             UserImage userImage = new UserImage(user, imagePath, time, time,
                     Files.size(Paths.get(imagePath)), averageColor,
@@ -294,8 +294,8 @@ public class UserImageService implements StorageService {
             userImage.getSpace().setModifiedTime(new Date(System.currentTimeMillis()));
 
             userImageRepository.save(userImage);
-        } catch (IOException e) {
-            throw new StorageException(e.getMessage());
+        } catch (IOException | IndexOutOfBoundsException e) {
+            throw new StorageException(e.getLocalizedMessage());
         }
     }
 
@@ -326,7 +326,7 @@ public class UserImageService implements StorageService {
 
             return bytesToSend;
         } catch (IOException e) {
-            throw new StorageException(e.getMessage());
+            throw new StorageException(e.getLocalizedMessage());
         }
     }
 

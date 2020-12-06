@@ -1,10 +1,10 @@
 import sys
 import numpy as np
-import cv2
+from PIL import Image
 
 if len(sys.argv) == 4:
-    image = cv2.imread(sys.argv[1].rstrip())
-    frame = cv2.imread(sys.argv[2].rstrip())
+    image = np.array(Image.open(sys.argv[1].rstrip()))
+    frame = np.array(Image.open(sys.argv[2].rstrip()))
 
     frame[frame > 240] = 0
 
@@ -19,7 +19,9 @@ if len(sys.argv) == 4:
     frame_size_y = off_y
 
     image_shape = (image.shape[1] + 2 * frame_size_x, image.shape[0] + 2 * frame_size_y)
-    frame = np.dstack([cv2.resize(frame[:, :, i], image_shape) for i in range(3)])
+    frame = np.dstack([np.array(Image.fromarray(frame[:, :, i].astype(np.uint8)).resize(image_shape, Image.ANTIALIAS))
+                       for i in range(3)])
     frame[frame_size_y:-frame_size_y, frame_size_x:-frame_size_x, :] = image
 
-    cv2.imwrite(sys.argv[-1], frame)
+    frame = Image.fromarray(frame.astype(np.uint8))
+    frame.save(sys.argv[-1])
