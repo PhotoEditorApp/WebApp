@@ -9,6 +9,7 @@ import com.webapp.enums.Filters;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
 import com.webapp.imageprocessing.*;
+import com.webapp.json.ImageRatingResponse;
 import com.webapp.json.TagResponse;
 import com.webapp.properties.StorageProperties;
 import com.webapp.repositories.*;
@@ -63,24 +64,50 @@ public class UserImageService implements StorageService {
         }
     }
 
-    public Float getRatingByImage(Long imageId) throws Exception {
+    public void updateImageRating(Long imageId) throws Exception {
         Float rating = (float) 0;
 
         Optional<UserImage> userImage = findById(imageId);
         userImage.orElseThrow(() -> new Exception("cannot find image"));
 
+        // calculate rating
         int size = userImage.get().getRatings().size();
         if (size == 0){
-            size = 1;
+            // set it null if there aren't ratings
+            userImage.get().setRating(null);
+        }
+        else {
+            for (ImageRating imageRating : userImage.get().getRatings()) {
+                rating += imageRating.getRating();
+            }
+            rating = rating / size;
+
+            userImage.get().setRating(rating);
         }
 
-        for (ImageRating imageRating :userImage.get().getRatings()){
-            rating += imageRating.getRating();
-        }
-        rating = rating / size;
-
-        return rating;
+        // save rating or null
+        userImageRepository.save(userImage.get());
     }
+
+    // return list of Ratings of Image
+    public ArrayList<ImageRatingResponse> getRatingsByImage(Long imageId) throws Exception {
+        Optional<UserImage> userImage = userImageRepository.findById(imageId);
+        // check if empty
+        userImage.orElseThrow(()-> new Exception("cannot fin image"));
+
+        // convert ImageRating -> ImageRatingResponse, then aggregate it into list
+        // and return
+        return (ArrayList<ImageRatingResponse>) userImage.get().getRatings()
+                .stream()
+                .map(imageRating -> new ImageRatingResponse(
+                        imageRating.getUserAccount().getId(),
+                        imageRating.getImage().getId(),
+                        imageRating.getRating()
+                ))
+                .collect(Collectors.toList());
+    }
+
+
 
     // get image's tags
     public ArrayList<String> getTagsByImage(Long imageId) throws Exception {

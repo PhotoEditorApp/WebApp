@@ -50,6 +50,18 @@ public class UserImageController {
         }
     }
 
+
+    // get all ratings of image
+    @GetMapping("/{image_id}/rating")
+    public ResponseEntity<?> getImageRatings(@PathVariable Long image_id) {
+        try {
+            return new ResponseEntity<>(imageService.getRatingsByImage(image_id), HttpStatus.OK);
+
+        } catch (Exception exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/get_image_path")
     public ResponseEntity<?> getImageByPath(@RequestParam String path) {
         Resource resource = storageService.loadAsResource(Paths.get(path).getFileName().toString());

@@ -172,6 +172,21 @@ public class UserController {
         }
     }
 
+    // delete image rating
+    @Transactional
+    @DeleteMapping("/{user_id}/image/{image_id}/rating")
+    public ResponseEntity<?> deleteImageRating(@PathVariable Long user_id,
+                                               @PathVariable Long image_id) {
+        try {
+            imageRaitingService.delete(image_id, user_id);
+            return new ResponseEntity<>("image tag was successfully deleted", HttpStatus.OK);
+
+        } catch (Exception exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+
     // update or create rating of image by some user
     @Transactional
     @PutMapping("/{user_id}/image/{image_id}/rating")

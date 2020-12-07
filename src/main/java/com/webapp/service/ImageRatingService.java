@@ -39,28 +39,46 @@ public class ImageRatingService {
 
         // check access of user
         if (!spaceAccessService.isUserHasAccessToImage(userId, imageId, AccessType.EDITOR) &&
-                !spaceAccessService.isUserHasAccessToImage(userId, imageId, AccessType.CREATOR)){
+                !spaceAccessService.isUserHasAccessToImage(userId, imageId, AccessType.CREATOR)) {
             throw new Exception("user doesn't have access to the image ");
         }
 
         Optional<ImageRating> imageRating = imageRatingRepository.findByImageRatingId(new ImageRatingId(imageId, userId));
 
-        if (imageRating.isPresent()){
+        if (imageRating.isPresent()) {
             imageRating.get().setRating(ratingNumber);
-        }
-        else{
+        } else {
             imageRating = Optional.of(new ImageRating(userImage.get(), userAccount.get(), ratingNumber));
         }
-
-        imageRatingRepository.save(imageRating.get());
-        userImage.get().setRating(userImageService.getRatingByImage(imageId));
-
-    }
-
-
-    // update or create rating of image
-    public void delete(Long user_id, Long image_id) {
+        imageRatingRepository.saveAndFlush(imageRating.get());
+        // update image rating
+        userImageService.updateImageRating(imageId);
 
     }
 
+
+    // delete image rating
+    public void delete(Long imageId, Long userId) throws Exception {
+        Optional<UserImage> userImage = userImageService.findById(imageId);
+        Optional<UserAccount> userAccount = userAccountService.findById(userId);
+
+        // check that image + user exist + range of ratingNumber
+        userImage.orElseThrow(() -> new Exception("cannot find image"));
+        userAccount.orElseThrow(() -> new Exception("cannot find user"));
+
+        // check access of user
+        if (!spaceAccessService.isUserHasAccessToImage(userId, imageId, AccessType.EDITOR) &&
+                !spaceAccessService.isUserHasAccessToImage(userId, imageId, AccessType.CREATOR)) {
+            throw new Exception("user doesn't have access to the image ");
+        }
+
+        Optional<ImageRating> imageRating = imageRatingRepository.findByImageRatingId(new ImageRatingId(imageId, userId));
+        if (imageRating.isPresent()) {
+            imageRatingRepository.delete(imageRating.get());
+        } else {
+            throw new Exception("user didn't rate image");
+        }
+        imageRatingRepository.flush();
+        userImageService.updateImageRating(imageId);
+    }
 }
