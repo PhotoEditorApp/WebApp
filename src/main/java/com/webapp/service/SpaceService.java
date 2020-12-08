@@ -7,6 +7,7 @@ import com.webapp.enums.AccessType;
 import com.webapp.json.ImageResponse;
 import com.webapp.repositories.ImageTagRepository;
 import com.webapp.repositories.SpaceRepository;
+import com.webapp.repositories.UserImageRepository;
 import com.webapp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,16 +25,18 @@ public class SpaceService {
     private final SpaceAccessService spaceAccessService;
     private final UserImageService imageService;
     private final ImageTagRepository imageTagRepository;
+    private final UserImageRepository userImageRepository;
 
     @Autowired
     public SpaceService(UserRepository userRepository, SpaceRepository spaceRepository,
                         SpaceAccessService spaceAccessService, UserImageService imageService,
-                        ImageTagRepository imageTagRepository) {
+                        ImageTagRepository imageTagRepository, UserImageRepository userImageRepository) {
         this.userRepository = userRepository;
         this.spaceRepository = spaceRepository;
         this.spaceAccessService = spaceAccessService;
         this.imageService = imageService;
         this.imageTagRepository = imageTagRepository;
+        this.userImageRepository = userImageRepository;
     }
 
     // get space by id
@@ -47,19 +50,19 @@ public class SpaceService {
         }
     }
 
+    // if user is owner -> delete space + spaceAccess
+    // user is editor, viewer -> delete spaceAccess
     public void deleteByUserIdAndSpaceId(Long spaceId, Long userId) throws Exception {
         Optional<SpaceAccess> spaceAccess = spaceAccessService.findSpaceAccess(spaceId, userId);
         if (spaceAccess.isPresent()){
-
             // delete space access + image tags from this user
             spaceAccessService.delete(spaceAccess.get());
 
-
-            // if owner delete space -> delete space, access_type
-            if (spaceAccess.get().getType().equals(AccessType.CREATOR)){
-                deleteById(spaceId);
+            if (spaceAccess.get().getType().equals(AccessType.CREATOR)) {
+                // if owner delete space -> delete space
+                Space space = spaceAccess.get().getSpace();
+                userImageRepository.deleteBySpace(space);
             }
-
         }
         else{
             throw new Exception("cannot find space Access");

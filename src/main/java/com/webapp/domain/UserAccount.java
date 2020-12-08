@@ -23,7 +23,7 @@ public class UserAccount implements Serializable {
     private boolean enabled;
     private String registration_time;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "userAccount")
+    @OneToOne(mappedBy = "userAccount")
     private Profile profile;
 
     public Profile getProfile() {
