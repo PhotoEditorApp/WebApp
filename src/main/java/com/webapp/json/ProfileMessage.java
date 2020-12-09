@@ -3,7 +3,7 @@ package com.webapp.json;
 import java.io.Serializable;
 
 public class ProfileMessage implements Serializable {
-    private Long user_id;
+    private Long id;
     private String firstName;
     private String lastName;
     private String fullName;
@@ -12,12 +12,12 @@ public class ProfileMessage implements Serializable {
 
     public ProfileMessage(){}
 
-    public Long getUser_id() {
-        return user_id;
+    public Long getId() {
+        return id;
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
