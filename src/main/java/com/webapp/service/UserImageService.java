@@ -24,10 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -261,7 +258,11 @@ public class UserImageService implements StorageService {
             UserImage userImage = userImageOptional.get();
 
             userImage.getSpace().setModifiedTime(new Date(System.currentTimeMillis()));
-            Files.delete(Paths.get(rootLocation.resolve(userImage.getName()).toString()));
+            try {
+                Files.delete(Paths.get(rootLocation.resolve(userImage.getName()).toString()));
+            } catch (NoSuchFileException e){
+                throw new FileNotFoundException(String.format("No such file with id=%d in storage", + id));
+            }
 
             userImageRepository.delete(userImage);
         } else {
