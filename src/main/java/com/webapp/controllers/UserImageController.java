@@ -152,6 +152,7 @@ public class UserImageController {
     @DeleteMapping("/delete_image")
     public ResponseEntity<ActionMessage> deleteImageById(@RequestParam Long id) {
         try {
+
             storageService.deleteImage(id);
         } catch (FileNotFoundException | IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

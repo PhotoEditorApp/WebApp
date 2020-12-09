@@ -85,17 +85,8 @@ public class SpaceAccessService {
 
     // delete space access and image tags
     public void delete(SpaceAccess spaceAccess) {
-        // delete tags
-//        spaceAccess.getSpace().getUserImages()
-//                .forEach(userImage -> userImage.getImageTags()
-//                        .forEach(imageTag -> {
-//                            if (imageTag.getTag().getUser().equals(spaceAccess.getUser())){
-//                                imageTagRepository.deleteByTag(imageTag.getTag());
-//                            }
-//                        }));
-
-        // delete space acess
         spaceAccessRepository.delete(spaceAccess);
+        spaceAccessRepository.flush();
     }
 
     public SpaceAccessRepository getSpaceAccessRepository() {

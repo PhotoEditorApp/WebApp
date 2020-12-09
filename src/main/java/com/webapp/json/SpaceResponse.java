@@ -29,6 +29,7 @@ public class SpaceResponse implements Serializable{
 
     public SpaceResponse(){}
 
+
     public Long getId() {
         return id;
     }

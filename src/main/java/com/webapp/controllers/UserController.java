@@ -161,8 +161,8 @@ public class UserController {
     @Transactional
     @DeleteMapping("/{user_id}/image/{image_id}/image_tag/{tag_name}")
     public ResponseEntity<?> deleteImageTag(@PathVariable Long user_id,
-                                      @PathVariable Long image_id,
-                                      @PathVariable String tag_name) {
+                                            @PathVariable Long image_id,
+                                            @PathVariable String tag_name) {
         try {
             imageTagService.delete(image_id, tag_name, user_id);
             return new ResponseEntity<>("image tag was successfully deleted", HttpStatus.OK);
@@ -192,7 +192,7 @@ public class UserController {
     @PutMapping("/{user_id}/image/{image_id}/rating")
     public ResponseEntity<?> addImageRating(@PathVariable Long user_id,
                                             @PathVariable Long image_id,
-                                            @RequestParam Long rating_number){
+                                            @RequestParam Long rating_number) {
         try {
             imageRaitingService.save(image_id, user_id, rating_number);
             return new ResponseEntity<>("rating was successfully updated", HttpStatus.OK);

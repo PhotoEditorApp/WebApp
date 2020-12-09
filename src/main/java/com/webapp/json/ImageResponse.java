@@ -1,9 +1,12 @@
 package com.webapp.json;
 
+import com.webapp.domain.ImageTag;
 import com.webapp.domain.UserImage;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Set;
 
 public class ImageResponse implements Serializable {
     private Long id;
@@ -11,17 +14,16 @@ public class ImageResponse implements Serializable {
     private Long user_id;
     private String path;
     private String preview_path;
-
     private Date createTime;
     private Long average_color;
     private Float rating;
-
+    private ArrayList<String> tags;
     private Long size;
     private Date modifiedTime;
 
     public ImageResponse(){ }
 
-    public ImageResponse(UserImage image){
+    public ImageResponse(UserImage image, ArrayList<String> tags){
         this.id = image.getId();
         this.name = image.getName();
         this.average_color = image.getAverageColor().getRgb();
@@ -32,6 +34,7 @@ public class ImageResponse implements Serializable {
         this.modifiedTime = image.getModifiedTime();
         this.preview_path = image.getPreview_path();
         this.rating = image.getRating();
+        this.tags = tags;
     }
 
     public Long getAverage_color() {
@@ -42,6 +45,13 @@ public class ImageResponse implements Serializable {
         this.average_color = average_color;
     }
 
+    public ArrayList<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(ArrayList<String> tags) {
+        this.tags = tags;
+    }
 
     public Long getId() {
         return id;

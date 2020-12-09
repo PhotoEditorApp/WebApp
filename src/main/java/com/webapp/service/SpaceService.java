@@ -3,6 +3,7 @@ package com.webapp.service;
 import com.webapp.domain.Space;
 import com.webapp.domain.SpaceAccess;
 import com.webapp.domain.UserAccount;
+import com.webapp.domain.UserImage;
 import com.webapp.enums.AccessType;
 import com.webapp.json.ImageResponse;
 import com.webapp.repositories.ImageTagRepository;
@@ -26,17 +27,19 @@ public class SpaceService {
     private final UserImageService imageService;
     private final ImageTagRepository imageTagRepository;
     private final UserImageRepository userImageRepository;
+    private final UserImageService userImageService;
 
     @Autowired
     public SpaceService(UserRepository userRepository, SpaceRepository spaceRepository,
                         SpaceAccessService spaceAccessService, UserImageService imageService,
-                        ImageTagRepository imageTagRepository, UserImageRepository userImageRepository) {
+                        ImageTagRepository imageTagRepository, UserImageRepository userImageRepository, UserImageService userImageService) {
         this.userRepository = userRepository;
         this.spaceRepository = spaceRepository;
         this.spaceAccessService = spaceAccessService;
         this.imageService = imageService;
         this.imageTagRepository = imageTagRepository;
         this.userImageRepository = userImageRepository;
+        this.userImageService = userImageService;
     }
 
     // get space by id
@@ -56,12 +59,14 @@ public class SpaceService {
         Optional<SpaceAccess> spaceAccess = spaceAccessService.findSpaceAccess(spaceId, userId);
         if (spaceAccess.isPresent()){
             // delete space access + image tags from this user
-            spaceAccessService.delete(spaceAccess.get());
-
             if (spaceAccess.get().getType().equals(AccessType.CREATOR)) {
                 // if owner delete space -> delete space
-                Space space = spaceAccess.get().getSpace();
-                userImageRepository.deleteBySpace(space);
+                deleteSpace(spaceAccess.get().getId().getSpaceId());
+                spaceRepository.flush();
+            }
+            else{
+                // else delete only access
+                spaceAccessService.delete(spaceAccess.get());
             }
         }
         else{
@@ -70,14 +75,30 @@ public class SpaceService {
 
     }
 
+    public void deleteSpace(Long spaceId) throws Exception {
+        Optional<Space> space = spaceRepository.findById(spaceId);
+        space.orElseThrow(() -> new Exception("cannot find space"));
+        // delete images
+        space.get().getUserImages().forEach(userImageService::delete);
+        // delete accesses
+        space.get().getSpaceAccesses().forEach(spaceAccessService::delete);
+        userImageRepository.flush();
+        // delete space
+        spaceRepository.delete(space.get());
+        spaceRepository.flush();
+    }
+
 
     // get all images from space
     public ArrayList<ImageResponse> getImages(Long space_id) throws Exception{
         Optional<Space> space = spaceRepository.findById(space_id);
         ArrayList<ImageResponse> imageResponses = new ArrayList<>();
         if (space.isPresent()){
-            space.get().getUserImages()
-                         .forEach(userImage -> imageResponses.add(new ImageResponse(userImage)));
+            // transform userImage -> ImageRespons
+            for (UserImage userImage : space.get().getUserImages()) {
+                ArrayList<String> tags = userImageService.getTagsByImage(userImage.getId());
+                imageResponses.add(new ImageResponse(userImage, tags));
+            }
             return imageResponses;
         }
         else{

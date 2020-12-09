@@ -41,19 +41,11 @@ public class SpaceController {
     public HttpEntity<? extends Serializable> getSpace(@PathVariable Long id){
         try {
             Space space = spaceService.getById(id);
-            SpaceResponse spaceResponse = new SpaceResponse();
-            spaceResponse.setId(space.getId());
-            spaceResponse.setColor(space.getColor());
-            spaceResponse.setUserId(space.getUser().getId());
-            spaceResponse.setName(space.getName());
-            spaceResponse.setDescription(space.getDescription());
-            spaceResponse.setCreatedTime(space.getCreatedTime());
-            spaceResponse.setModifiedTime(space.getModifiedTime());
+            SpaceResponse spaceResponse = new SpaceResponse(space);
             return new ResponseEntity<>(spaceResponse, HttpStatus.OK);
 
         }
         catch (Exception exception){
-            exception.printStackTrace();
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -65,7 +57,6 @@ public class SpaceController {
             return new ResponseEntity<>(userAccountService.getUsersBySpaceId(space_id), HttpStatus.OK);
         }
         catch (Exception exception){
-            exception.printStackTrace();
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
