@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name="image")
-public class UserImage implements Serializable {
+public class UserImage implements Serializable, Picture {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -32,7 +32,7 @@ public class UserImage implements Serializable {
     }
 
     private Date modifiedTime;
-    private String preview_path;
+    private String previewPath;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "avg_color_id", referencedColumnName = "id")
     private AverageColor averageColor;
@@ -95,6 +95,7 @@ public class UserImage implements Serializable {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -111,6 +112,7 @@ public class UserImage implements Serializable {
         this.user = user;
     }
 
+    @Override
     public String getPath() {
         return path;
     }
@@ -147,11 +149,12 @@ public class UserImage implements Serializable {
         this.averageColor = averageColor;
     }
 
-    public String getPreview_path() {
-        return preview_path;
+    @Override
+    public String getPreviewPath() {
+        return previewPath;
     }
 
-    public void setPreview_path(String preview_path) {
-        this.preview_path = preview_path;
+    public void setPreviewPath(String preview_path) {
+        this.previewPath = preview_path;
     }
 }

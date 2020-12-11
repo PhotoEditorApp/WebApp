@@ -94,9 +94,4 @@ public class SpaceController {
             return new ResponseEntity<>("Cannot find user", HttpStatus.NOT_FOUND);
        }
     }
-
-
-
-
-
 }

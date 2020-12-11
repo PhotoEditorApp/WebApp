@@ -35,7 +35,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             "/image/frame",
             "/image/edit_info",
             "/image/get_image_id",
-            "/image/delete_image"
+            "/image/delete_image",
+            "/image/frame_previews_ids",
+            "/image/frame_preview_id"
     };
 
     protected void configure(HttpSecurity httpSecurity) throws Exception {

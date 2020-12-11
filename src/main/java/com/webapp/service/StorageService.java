@@ -28,7 +28,7 @@ public interface StorageService {
 
     Resource getResource(Long imageId);
 
-    Resource getFrameResource(Long frameId);
+    Resource getFrameResource(Long frameId) throws FileNotFoundException;
 
     void editInfo(Long imageId, String newName) throws StorageException;
 
@@ -46,4 +46,8 @@ public interface StorageService {
     byte[] getImageWithFrame(Long imageId, Long frameId) throws StorageException;
 
     void saveFrameInfo(String name);
+
+    byte[] getPreviewOfFrameResource(Long id) throws StorageException;
+
+    List<Long> getListOfFramesPreview();
 }

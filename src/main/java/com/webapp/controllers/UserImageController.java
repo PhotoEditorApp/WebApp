@@ -1,6 +1,5 @@
 package com.webapp.controllers;
 
-import com.webapp.domain.UserImage;
 import com.webapp.enums.Filters;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
@@ -29,14 +28,10 @@ public class UserImageController {
 
     private final StorageService storageService;
     private final UserImageService imageService;
-    private final ImageTagService imageTagService;
-    private final TagService tagService;
 
     public UserImageController(StorageService storageService, UserImageService imageService, ImageTagService imageTagService, TagService tagService) {
         this.storageService = storageService;
         this.imageService = imageService;
-        this.imageTagService = imageTagService;
-        this.tagService = tagService;
     }
 
     // get all tags of image
@@ -148,7 +143,6 @@ public class UserImageController {
                 .body(new ActionMessage("There's no id to make a collage"));
     }
 
-    // TODO нужно удалять и теги, связанные с изображением
     @DeleteMapping("/delete_image")
     public ResponseEntity<ActionMessage> deleteImageById(@RequestParam Long id) {
         try {
@@ -234,9 +228,32 @@ public class UserImageController {
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
-        } catch (IOException e) {
+        } catch (IOException | FileNotFoundException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
+    }
+
+    @GetMapping("/frame_preview_id")
+    public ResponseEntity<?> getPreviewOfFrameById(@RequestParam Long id) {
+        byte[] bytes = storageService.getPreviewOfFrameResource(id);
+
+        try {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            String.format("attachment; filename=preview_%d", id))
+                    .body(bytes);
+        } catch (StorageException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/frame_previews_ids")
+    public ResponseEntity<List<Long>> getPreviewOfFramesId() {
+        List<Long> PreviewListOfId = storageService.getListOfFramesPreview();
+
+        return ResponseEntity.ok()
+                .body(PreviewListOfId);
     }
 }

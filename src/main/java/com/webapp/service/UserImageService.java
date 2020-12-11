@@ -1,16 +1,13 @@
 package com.webapp.service;
 
-import com.webapp.domain.*;
 import com.webapp.domain.AverageColor;
 import com.webapp.domain.Frame;
 import com.webapp.domain.*;
-import com.webapp.domain.Frame;
 import com.webapp.enums.Filters;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
 import com.webapp.imageprocessing.*;
 import com.webapp.json.ImageRatingResponse;
-import com.webapp.json.TagResponse;
 import com.webapp.properties.StorageProperties;
 import com.webapp.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +86,6 @@ public class UserImageService implements StorageService {
     // return list of Ratings of Image
     public ArrayList<ImageRatingResponse> getRatingsByImage(Long imageId) throws Exception {
         Optional<UserImage> userImage = userImageRepository.findById(imageId);
-        // check if empty
         userImage.orElseThrow(()-> new Exception("cannot fin image"));
 
         // convert ImageRating -> ImageRatingResponse, then aggregate it into list
@@ -103,8 +99,6 @@ public class UserImageService implements StorageService {
                 ))
                 .collect(Collectors.toList());
     }
-
-
 
     // get image's tags
     public ArrayList<String> getTagsByImage(Long imageId) throws Exception {
@@ -239,7 +233,7 @@ public class UserImageService implements StorageService {
     // this method duplicates getResource because these query applies to another tables
     // there's no handy way to combine these methods together
     @Override
-    public Resource getFrameResource(Long frameId){
+    public Resource getFrameResource(Long frameId) throws FileNotFoundException{
         Optional<Frame> frame = frameRepository.findById(frameId);
 
         if (frame.isPresent()){
@@ -318,7 +312,7 @@ public class UserImageService implements StorageService {
                     imageName, space);
 
             String previewPath = new Preview(rootLocation, userImage).processing();
-            userImage.setPreview_path(previewPath);
+            userImage.setPreviewPath(previewPath);
             userImage.getSpace().setModifiedTime(new Date(System.currentTimeMillis()));
 
             userImageRepository.save(userImage);
@@ -379,9 +373,31 @@ public class UserImageService implements StorageService {
     @Override
     public void saveFrameInfo(String name) {
         Frame frame = new Frame(name);
+        frame.setPreviewPath(new Preview(rootLocation, frame).processing());
         frame.setPath(rootLocation.resolve(name).toString());
 
         frameRepository.save(frame);
+    }
+
+    @Override
+    public byte[] getPreviewOfFrameResource(Long id) throws StorageException{
+        Frame frame = frameRepository.findById(id)
+                .orElseThrow(() -> new StorageException(String.format("There's no such frame with id=%d", id)));
+
+        try {
+            return Files.readAllBytes(Paths.get(frame.getPreviewPath()));
+        } catch (IOException e) {
+            throw new StorageException(e.getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public List<Long> getListOfFramesPreview() {
+        List<Frame> listOfFrames = frameRepository.findAll();
+
+        return listOfFrames.stream()
+                .map(Frame::getId)
+                .collect(Collectors.toList());
     }
 
     private UserImage getUserImage(Long imageId) throws StorageException{

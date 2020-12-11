@@ -1,6 +1,6 @@
 package com.webapp.imageprocessing;
 
-import com.webapp.domain.UserImage;
+import com.webapp.domain.Picture;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Preview extends ProcessingProduct{
-    private final UserImage userImage;
+    private final Picture userImage;
 
-    public Preview(Path rootLocation, UserImage userImage){
+    public Preview(Path rootLocation, Picture userImage){
         super(rootLocation);
         this.userImage = userImage;
     }
