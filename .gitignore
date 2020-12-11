@@ -31,3 +31,5 @@ hs_err_pid*
 /uploads/
 !/libs/
 !/libs/opencv-4.3.0-2.jar
+/src/main/webapp/
+/uploads/
