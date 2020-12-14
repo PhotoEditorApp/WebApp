@@ -3,9 +3,26 @@ import numpy as np
 from functools import reduce
 from PIL import Image
 
+
+def fix_wrong_format(images):
+    new_images = []
+    for i in range(len(images)):
+        if len(images[i].shape) == 2:
+            new_images.append(np.dstack((images[i], np.zeros(images[i].shape), np.zeros(images[i].shape))))
+        elif images[i].shape[-1] == 2:
+            new_images.append(np.dstack((images[i], np.zeros(images[i].shape))))
+        elif images[i].shape[-1] > 3:
+            new_images.append(images[i][:, :, :3])
+        else:
+            new_images.append(images[i])
+    return new_images
+
+
 if len(sys.argv) == 4:
     image = np.array(Image.open(sys.argv[1].rstrip()))
     frame = np.array(Image.open(sys.argv[2].rstrip()))
+
+    image, frame = fix_wrong_format([image, frame])
 
     if len(frame.shape) == 2:
         frame = np.dstack((frame, np.zeros(frame.shape), np.zeros(frame.shape)))

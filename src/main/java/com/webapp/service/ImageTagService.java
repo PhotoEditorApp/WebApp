@@ -1,6 +1,6 @@
 package com.webapp.service;
 
-import com.webapp.compositeKeys.ImageTagId;
+import com.webapp.compositekeys.ImageTagId;
 import com.webapp.domain.*;
 import com.webapp.enums.AccessType;
 import com.webapp.repositories.*;

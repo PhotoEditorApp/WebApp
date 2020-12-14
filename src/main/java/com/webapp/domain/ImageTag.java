@@ -1,6 +1,6 @@
 package com.webapp.domain;
 
-import com.webapp.compositeKeys.ImageTagId;
+import com.webapp.compositekeys.ImageTagId;
 
 import javax.persistence.*;
 import java.io.Serializable;

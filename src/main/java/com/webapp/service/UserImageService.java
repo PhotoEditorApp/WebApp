@@ -35,17 +35,20 @@ public class UserImageService implements StorageService {
     private final UserRepository userRepository;
     private final SpaceRepository spaceRepository;
     private final FrameRepository frameRepository;
+    private final PhotoRepository photoRepository;
 
     @Autowired
     public UserImageService(StorageProperties properties, UserImageRepository userImageRepository,
                             AverageColorRepository averageColorRepository, UserRepository userRepository,
-                            SpaceRepository spaceRepository, FrameRepository frameRepository) {
+                            SpaceRepository spaceRepository, FrameRepository frameRepository,
+                            PhotoRepository photoRepository) {
         this.rootLocation = Paths.get(properties.getLocation());
         this.userImageRepository = userImageRepository;
         this.averageColorRepository = averageColorRepository;
         this.userRepository = userRepository;
         this.spaceRepository = spaceRepository;
         this.frameRepository = frameRepository;
+        this.photoRepository = photoRepository;
     }
 
     public Space getSpace(Long imageId) throws Exception {
@@ -340,6 +343,7 @@ public class UserImageService implements StorageService {
             case WB -> new WhiteAndBlackFilter(rootLocation, userImage).processing();
             case SHARP -> new SharpeningFilter(rootLocation, userImage).processing();
             case BLUR -> new BlurFilter(rootLocation, userImage).processing();
+            case SEPIA -> new SepiaFilter(rootLocation, userImage).processing();
         };
 
         try {
@@ -398,6 +402,48 @@ public class UserImageService implements StorageService {
         return listOfFrames.stream()
                 .map(Frame::getId)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public byte[] getPreviewOfPhotoResource(Long id) {
+        Photo photo = photoRepository.findById(id)
+                .orElseThrow(() -> new StorageException(String.format("There's no such photo with id=%d", id)));
+
+        try {
+            return Files.readAllBytes(Paths.get(photo.getPreviewPath()));
+        } catch (IOException e) {
+            throw new StorageException(e.getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public List<Long> getListOfPhotoPreview() {
+        List<Photo> listOfPhotos = photoRepository.findAll();
+
+        return listOfPhotos.stream()
+                .map(Photo::getId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Resource getPhotoResource(Long id) {
+        Optional<Photo> photo = photoRepository.findById(id);
+
+        if (photo.isPresent()){
+            return this.loadAsResource(photo.get().getName());
+        }else {
+            throw new FileNotFoundException(
+                    "Could not find file by id: " + id.toString());
+        }
+    }
+
+    @Override
+    public void savePhotoInfo(String name) {
+        Photo photo = new Photo(name);
+        photo.setPreviewPath(new Preview(rootLocation, photo).processing());
+        photo.setPath(rootLocation.resolve(name).toString());
+
+        photoRepository.save(photo);
     }
 
     private UserImage getUserImage(Long imageId) throws StorageException{

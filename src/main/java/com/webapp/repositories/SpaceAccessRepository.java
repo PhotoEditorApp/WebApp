@@ -1,6 +1,6 @@
 package com.webapp.repositories;
 
-import com.webapp.compositeKeys.SpaceAccessId;
+import com.webapp.compositekeys.SpaceAccessId;
 import com.webapp.domain.SpaceAccess;
 import org.springframework.data.jpa.repository.JpaRepository;
 

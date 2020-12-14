@@ -1,12 +1,11 @@
 package com.webapp.service;
 
-import com.webapp.compositeKeys.ImageRatingId;
+import com.webapp.compositekeys.ImageRatingId;
 import com.webapp.domain.ImageRating;
 import com.webapp.domain.UserAccount;
 import com.webapp.domain.UserImage;
 import com.webapp.enums.AccessType;
 import com.webapp.repositories.ImageRatingRepository;
-import com.webapp.repositories.UserImageRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

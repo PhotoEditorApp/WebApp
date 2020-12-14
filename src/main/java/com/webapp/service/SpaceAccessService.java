@@ -1,6 +1,6 @@
 package com.webapp.service;
 
-import com.webapp.compositeKeys.SpaceAccessId;
+import com.webapp.compositekeys.SpaceAccessId;
 import com.webapp.domain.Space;
 import com.webapp.domain.SpaceAccess;
 import com.webapp.domain.UserAccount;

@@ -1,6 +1,5 @@
 package com.webapp.service;
 
-import com.webapp.domain.UserImage;
 import com.webapp.enums.Filters;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
@@ -50,4 +49,12 @@ public interface StorageService {
     byte[] getPreviewOfFrameResource(Long id) throws StorageException;
 
     List<Long> getListOfFramesPreview();
+
+    byte[] getPreviewOfPhotoResource(Long id);
+
+    List<Long> getListOfPhotoPreview();
+
+    Resource getPhotoResource(Long id);
+
+    void savePhotoInfo(String name);
 }

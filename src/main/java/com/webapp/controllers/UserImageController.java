@@ -18,8 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -161,7 +163,7 @@ public class UserImageController {
     public ResponseEntity<ActionMessage> editImageInfo(@RequestParam Long imageId,
                                                        @RequestParam String newName) {
         try {
-            storageService.editInfo(imageId, newName);
+            storageService.editInfo(imageId, new String(newName.getBytes(), StandardCharsets.UTF_8));
         } catch (StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
@@ -192,11 +194,14 @@ public class UserImageController {
     }
 
     @PostMapping("/upload_multiple_images")
-    public List<FileResponse> uploadMultipleImages(@RequestParam("files") MultipartFile[] files) {
-        return null;
-//        return Arrays.stream(files)
-//                .map(this::uploadImage)
-//                .collect(Collectors.toList());
+    public List<FileResponse> uploadMultipleImages(@RequestParam("user_ids") Long[] user_id,
+                                                   @RequestParam("space_ids") Long[] space_id,
+                                                   @RequestParam("files") MultipartFile[] files) {
+        List<FileResponse> fileResponses = new ArrayList<>();
+        for (int i = 0; i < Math.min(Math.min(user_id.length, files.length), space_id.length); i++){
+            fileResponses.add((FileResponse) this.uploadImage(user_id[i], space_id[i], files[i]).getBody());
+        }
+        return fileResponses;
     }
 
     @PostMapping("/upload_frame")
@@ -255,5 +260,63 @@ public class UserImageController {
 
         return ResponseEntity.ok()
                 .body(PreviewListOfId);
+    }
+
+    @GetMapping("/photo_preview_id")
+    public ResponseEntity<?> getPreviewOfPhotoById(@RequestParam Long id) {
+        byte[] bytes = storageService.getPreviewOfPhotoResource(id);
+
+        try {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            String.format("attachment; filename=preview_photo_%d", id))
+                    .body(bytes);
+        } catch (StorageException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/photo_previews_ids")
+    public ResponseEntity<List<Long>> getPreviewOfPhotosId() {
+        List<Long> PreviewListOfId = storageService.getListOfPhotoPreview();
+
+        return ResponseEntity.ok()
+                .body(PreviewListOfId);
+    }
+
+    @PostMapping("/photo")
+    public ResponseEntity<?> uploadPhoto(@RequestParam("photo") MultipartFile file) {
+        String name = storageService.store(file);
+        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/download/")
+                .path(name)
+                .toUriString();
+
+        try {
+            storageService.savePhotoInfo(name);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
+
+        return ResponseEntity.ok()
+                .body(new FileResponse(name, uri, file.getContentType(), file.getSize()));
+    }
+
+
+    @GetMapping("/photo_id")
+    public ResponseEntity<?> getPhotoById(@RequestParam Long id) {
+        Resource resource = storageService.getPhotoResource(id);
+
+        try {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
+        } catch (IOException | FileNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
     }
 }

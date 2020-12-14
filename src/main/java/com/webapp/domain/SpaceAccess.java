@@ -1,7 +1,7 @@
 package com.webapp.domain;
 import javax.persistence.*;
 
-import com.webapp.compositeKeys.SpaceAccessId;
+import com.webapp.compositekeys.SpaceAccessId;
 import com.webapp.enums.AccessType;
 import java.io.Serializable;
 import java.util.Objects;
