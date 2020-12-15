@@ -1,6 +1,5 @@
 package com.webapp.service;
 
-import com.webapp.domain.UserImage;
 import com.webapp.enums.Filters;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
@@ -28,7 +27,7 @@ public interface StorageService {
 
     Resource getResource(Long imageId);
 
-    Resource getFrameResource(Long frameId);
+    Resource getFrameResource(Long frameId) throws FileNotFoundException;
 
     void editInfo(Long imageId, String newName) throws StorageException;
 
@@ -46,4 +45,20 @@ public interface StorageService {
     byte[] getImageWithFrame(Long imageId, Long frameId) throws StorageException;
 
     void saveFrameInfo(String name);
+
+    byte[] getPreviewOfFrameResource(Long id) throws StorageException;
+
+    List<Long> getListOfFramesPreview();
+
+    byte[] getPreviewOfPhotoResource(Long id);
+
+    List<Long> getListOfPhotoPreview();
+
+    Resource getPhotoResource(Long id);
+
+    void savePhotoInfo(Long profileId, String name);
+
+    Resource getPhotoByProfileIdResource(Long profileId);
+
+    byte[] getPreviewOfPhotoByProfileResource(Long profileId);
 }

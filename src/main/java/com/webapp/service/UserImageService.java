@@ -1,16 +1,13 @@
 package com.webapp.service;
 
-import com.webapp.domain.*;
 import com.webapp.domain.AverageColor;
 import com.webapp.domain.Frame;
 import com.webapp.domain.*;
-import com.webapp.domain.Frame;
 import com.webapp.enums.Filters;
 import com.webapp.exceptions.FileNotFoundException;
 import com.webapp.exceptions.StorageException;
 import com.webapp.imageprocessing.*;
 import com.webapp.json.ImageRatingResponse;
-import com.webapp.json.TagResponse;
 import com.webapp.properties.StorageProperties;
 import com.webapp.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,17 +35,22 @@ public class UserImageService implements StorageService {
     private final UserRepository userRepository;
     private final SpaceRepository spaceRepository;
     private final FrameRepository frameRepository;
+    private final PhotoRepository photoRepository;
+    private final ProfileRepository profileRepository;
 
     @Autowired
     public UserImageService(StorageProperties properties, UserImageRepository userImageRepository,
                             AverageColorRepository averageColorRepository, UserRepository userRepository,
-                            SpaceRepository spaceRepository, FrameRepository frameRepository) {
+                            SpaceRepository spaceRepository, FrameRepository frameRepository,
+                            PhotoRepository photoRepository, ProfileRepository profileRepository) {
         this.rootLocation = Paths.get(properties.getLocation());
         this.userImageRepository = userImageRepository;
         this.averageColorRepository = averageColorRepository;
         this.userRepository = userRepository;
         this.spaceRepository = spaceRepository;
         this.frameRepository = frameRepository;
+        this.photoRepository = photoRepository;
+        this.profileRepository = profileRepository;
     }
 
     public Space getSpace(Long imageId) throws Exception {
@@ -92,7 +91,6 @@ public class UserImageService implements StorageService {
     // return list of Ratings of Image
     public ArrayList<ImageRatingResponse> getRatingsByImage(Long imageId) throws Exception {
         Optional<UserImage> userImage = userImageRepository.findById(imageId);
-        // check if empty
         userImage.orElseThrow(()-> new Exception("cannot fin image"));
 
         // convert ImageRating -> ImageRatingResponse, then aggregate it into list
@@ -106,8 +104,6 @@ public class UserImageService implements StorageService {
                 ))
                 .collect(Collectors.toList());
     }
-
-
 
     // get image's tags
     public ArrayList<String> getTagsByImage(Long imageId) throws Exception {
@@ -242,7 +238,7 @@ public class UserImageService implements StorageService {
     // this method duplicates getResource because these query applies to another tables
     // there's no handy way to combine these methods together
     @Override
-    public Resource getFrameResource(Long frameId){
+    public Resource getFrameResource(Long frameId) throws FileNotFoundException{
         Optional<Frame> frame = frameRepository.findById(frameId);
 
         if (frame.isPresent()){
@@ -261,7 +257,11 @@ public class UserImageService implements StorageService {
             UserImage userImage = userImageOptional.get();
 
             userImage.getSpace().setModifiedTime(new Date(System.currentTimeMillis()));
-            Files.delete(Paths.get(rootLocation.resolve(userImage.getName()).toString()));
+            try {
+                Files.delete(Paths.get(rootLocation.resolve(userImage.getName()).toString()));
+            } catch (NoSuchFileException e){
+                throw new FileNotFoundException(String.format("No such file with id=%d in storage", + id));
+            }
 
             userImageRepository.delete(userImage);
         } else {
@@ -317,7 +317,7 @@ public class UserImageService implements StorageService {
                     imageName, space);
 
             String previewPath = new Preview(rootLocation, userImage).processing();
-            userImage.setPreview_path(previewPath);
+            userImage.setPreviewPath(previewPath);
             userImage.getSpace().setModifiedTime(new Date(System.currentTimeMillis()));
 
             userImageRepository.save(userImage);
@@ -341,21 +341,21 @@ public class UserImageService implements StorageService {
     public byte[] getFilteredImage(Long imageId, Filters filter) throws StorageException{
         UserImage userImage = getUserImage(imageId);
 
-//        String filterPath = switch (filter) {
-//            case WB -> new WhiteAndBlackFilter(rootLocation, userImage).processing();
-//            case SHARP -> new SharpeningFilter(rootLocation, userImage).processing();
-//            case BLUR -> new BlurFilter(rootLocation, userImage).processing();
-//        };
-//
-//        try {
-//            byte[] bytesToSend = Files.readAllBytes(Paths.get(filterPath));
-//            Files.delete(Paths.get(filterPath));
-//
-//            return bytesToSend;
-//        } catch (IOException e) {
-//            throw new StorageException(e.getLocalizedMessage());
-//        }
-        return null;
+        String filterPath = switch (filter) {
+            case WB -> new WhiteAndBlackFilter(rootLocation, userImage).processing();
+            case SHARP -> new SharpeningFilter(rootLocation, userImage).processing();
+            case BLUR -> new BlurFilter(rootLocation, userImage).processing();
+            case SEPIA -> new SepiaFilter(rootLocation, userImage).processing();
+        };
+
+        try {
+            byte[] bytesToSend = Files.readAllBytes(Paths.get(filterPath));
+            Files.delete(Paths.get(filterPath));
+
+            return bytesToSend;
+        } catch (IOException e) {
+            throw new StorageException(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -379,9 +379,102 @@ public class UserImageService implements StorageService {
     @Override
     public void saveFrameInfo(String name) {
         Frame frame = new Frame(name);
+        frame.setPreviewPath(new Preview(rootLocation, frame).processing());
         frame.setPath(rootLocation.resolve(name).toString());
 
         frameRepository.save(frame);
+    }
+
+    @Override
+    public byte[] getPreviewOfFrameResource(Long id) throws StorageException{
+        Frame frame = frameRepository.findById(id)
+                .orElseThrow(() -> new StorageException(String.format("There's no such frame with id=%d", id)));
+
+        try {
+            return Files.readAllBytes(Paths.get(frame.getPreviewPath()));
+        } catch (IOException e) {
+            throw new StorageException(e.getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public List<Long> getListOfFramesPreview() {
+        List<Frame> listOfFrames = frameRepository.findAll();
+
+        return listOfFrames.stream()
+                .map(Frame::getId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public byte[] getPreviewOfPhotoResource(Long id) {
+        Photo photo = photoRepository.findById(id)
+                .orElseThrow(() -> new StorageException(String.format("There's no such photo with id=%d", id)));
+
+        try {
+            return Files.readAllBytes(Paths.get(photo.getPreviewPath()));
+        } catch (IOException e) {
+            throw new StorageException(e.getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public List<Long> getListOfPhotoPreview() {
+        List<Photo> listOfPhotos = photoRepository.findAll();
+
+        return listOfPhotos.stream()
+                .map(Photo::getId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Resource getPhotoResource(Long id) {
+        Optional<Photo> photo = photoRepository.findById(id);
+
+        if (photo.isPresent()){
+            return this.loadAsResource(photo.get().getName());
+        }else {
+            throw new FileNotFoundException(
+                    "Could not find file by id: " + id.toString());
+        }
+    }
+
+    @Override
+    public void savePhotoInfo(Long profileId, String name) {
+        Photo photo = new Photo(name);
+        photo.setPreviewPath(new Preview(rootLocation, photo).processing());
+        photo.setPath(rootLocation.resolve(name).toString());
+
+        Profile profile = getProfile(profileId);
+        profile.setAvatarPath(rootLocation.resolve(name).toString());
+        photo.setProfile(profile);
+
+        photoRepository.save(photo);
+        profileRepository.save(profile);
+    }
+
+    @Override
+    public Resource getPhotoByProfileIdResource(Long profileId) {
+        Profile profile = getProfile(profileId);
+
+        return this.loadAsResource(Paths.get(profile.getAvatarPath()).getFileName().toString());
+    }
+
+    @Override
+    public byte[] getPreviewOfPhotoByProfileResource(Long profileId) {
+        Photo photo = photoRepository.findByProfile(getProfile(profileId))
+                .orElseThrow(() -> new StorageException("There's no photo with such profile id: " + profileId.toString()));
+
+        try {
+            return Files.readAllBytes(Paths.get(photo.getPreviewPath()));
+        } catch (IOException e) {
+            throw new StorageException(e.getLocalizedMessage());
+        }
+    }
+
+    private Profile getProfile(Long profileId) throws StorageException{
+        return profileRepository.findById(profileId)
+                .orElseThrow(() -> new StorageException("There's no profile with such id: " + profileId.toString()));
     }
 
     private UserImage getUserImage(Long imageId) throws StorageException{

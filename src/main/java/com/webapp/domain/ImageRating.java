@@ -1,7 +1,6 @@
 package com.webapp.domain;
 
-import com.webapp.compositeKeys.ImageRatingId;
-import com.webapp.compositeKeys.ImageTagId;
+import com.webapp.compositekeys.ImageRatingId;
 
 import javax.persistence.*;
 import java.io.Serializable;

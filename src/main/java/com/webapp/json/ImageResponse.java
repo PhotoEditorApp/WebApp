@@ -1,12 +1,10 @@
 package com.webapp.json;
 
-import com.webapp.domain.ImageTag;
 import com.webapp.domain.UserImage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Set;
 
 public class ImageResponse implements Serializable {
     private Long id;
@@ -32,7 +30,7 @@ public class ImageResponse implements Serializable {
         this.createTime = image.getCreateTime();
         this.size = image.getSize();
         this.modifiedTime = image.getModifiedTime();
-        this.preview_path = image.getPreview_path();
+        this.preview_path = image.getPreviewPath();
         this.rating = image.getRating();
         this.tags = tags;
     }

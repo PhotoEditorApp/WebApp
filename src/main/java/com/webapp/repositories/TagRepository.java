@@ -1,6 +1,5 @@
 package com.webapp.repositories;
 
-import com.webapp.compositeKeys.ImageTagId;
 import com.webapp.domain.UserAccount;
 import com.webapp.domain.UserTag;
 import org.springframework.data.jpa.repository.JpaRepository;

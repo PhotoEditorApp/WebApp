@@ -28,7 +28,7 @@ public class ProfileController {
 
         if (profile.isPresent()){
             ProfileMessage profileMessage = new ProfileMessage();
-            profileMessage.setUser_id(profile.get().getId());
+            profileMessage.setId(profile.get().getId());
             profileMessage.setEmail(profile.get().getEmail());
             profileMessage.setFirstName(profile.get().getFirstName());
             profileMessage.setLastName(profile.get().getLastName());
@@ -59,7 +59,7 @@ public class ProfileController {
     }
 
     // get profile by email
-    @GetMapping
+    @GetMapping("email")
     ResponseEntity<? extends Serializable> getProfileByEmail(@RequestParam String email){
         Optional<Profile> profile = profileService.findByEmail(email);
         if (profile.isPresent()){

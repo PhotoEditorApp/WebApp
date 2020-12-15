@@ -4,13 +4,14 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="frame")
-public class Frame {
+public class Frame implements Picture{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String name;
     private String path;
+    private String previewPath;
 
     public Frame(){}
 
@@ -26,6 +27,7 @@ public class Frame {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -34,11 +36,21 @@ public class Frame {
         this.name = name;
     }
 
+    @Override
     public String getPath() {
         return path;
     }
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    @Override
+    public String getPreviewPath() {
+        return previewPath;
+    }
+
+    public void setPreviewPath(String preview_path) {
+        this.previewPath = preview_path;
     }
 }

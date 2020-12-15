@@ -25,16 +25,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/v3/api-docs/**",
-            "/image/upload_image",
-            "/image/get_image_id",
-            "/image/get_collage",
-            "/image/get_image_path",
-            "/image/get_preview_img_id",
-            "/image/filter",
-            "/image/upload_frame",
-            "/image/frame",
-            "/image/edit_info",
-            "/image/get_image_id"
+            "/image/*"
     };
 
     protected void configure(HttpSecurity httpSecurity) throws Exception {

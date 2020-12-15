@@ -1,26 +1,62 @@
 import sys
 import numpy as np
+from functools import reduce
 from PIL import Image
+
+
+def fix_wrong_format(images):
+    new_images = []
+    for i in range(len(images)):
+        if len(images[i].shape) == 2:
+            new_images.append(np.dstack((images[i], np.zeros(images[i].shape), np.zeros(images[i].shape))))
+        elif images[i].shape[-1] == 2:
+            new_images.append(np.dstack((images[i], np.zeros(images[i].shape))))
+        elif images[i].shape[-1] > 3:
+            new_images.append(images[i][:, :, :3])
+        else:
+            new_images.append(images[i])
+    return new_images
+
 
 if len(sys.argv) == 4:
     image = np.array(Image.open(sys.argv[1].rstrip()))
     frame = np.array(Image.open(sys.argv[2].rstrip()))
 
-    frame[frame > 240] = 0
+    image, frame = fix_wrong_format([image, frame])
 
-    off_x, off_y = frame.shape[1] // 2, frame.shape[0] // 2
-    while frame[off_y, off_x, :].sum() == 0:
+    if len(frame.shape) == 2:
+        frame = np.dstack((frame, np.zeros(frame.shape), np.zeros(frame.shape)))
+
+    image_shape = (image.shape[1], image.shape[0])
+    frame = np.dstack([np.array(Image.fromarray(frame[:, :, i].astype(np.uint8)).resize(image_shape, Image.ANTIALIAS))
+                       for i in range(3)])
+
+    frame_deriv_x = reduce(lambda x, y: x + y, [frame[:, :, i] for i in range(frame.shape[2])]) // 3
+    frame_deriv_y = reduce(lambda x, y: x + y, [frame[:, :, i] for i in range(frame.shape[2])]) // 3
+
+    for i in range(frame_deriv_x.shape[0]):
+        frame_deriv_x[i, :] = np.convolve(np.array([1, 0, -1]), frame_deriv_x[i, :], mode="same") // 3
+
+    for j in range(frame_deriv_y.shape[1]):
+        frame_deriv_y[:, j] = np.convolve(np.array([1, 0, -1]), frame_deriv_y[:, j], mode="same") // 3
+
+    frame_deriv = np.round(np.sqrt(frame_deriv_x ** 2 + frame_deriv_y ** 2)).astype(np.uint8)
+    off_x, off_y = frame_deriv.shape[1] // 2, frame_deriv.shape[0] // 2
+    threshold = frame_deriv.max()
+
+    while frame_deriv[off_y, off_x] == 0:
         off_x -= 1
     frame_size_x = off_x
 
-    off_x = frame.shape[1] // 2
-    while frame[off_y, off_x, :].sum() == 0:
+    off_x = frame_deriv.shape[1] // 2
+    while frame_deriv[off_y, off_x] == 0:
         off_y -= 1
     frame_size_y = off_y
 
     image_shape = (image.shape[1] + 2 * frame_size_x, image.shape[0] + 2 * frame_size_y)
     frame = np.dstack([np.array(Image.fromarray(frame[:, :, i].astype(np.uint8)).resize(image_shape, Image.ANTIALIAS))
                        for i in range(3)])
+
     frame[frame_size_y:-frame_size_y, frame_size_x:-frame_size_x, :] = image
 
     frame = Image.fromarray(frame.astype(np.uint8))

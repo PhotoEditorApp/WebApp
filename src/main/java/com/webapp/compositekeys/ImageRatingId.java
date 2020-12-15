@@ -1,20 +1,20 @@
-package com.webapp.compositeKeys;
+package com.webapp.compositekeys;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class SpaceAccessId implements Serializable {
+public class ImageRatingId implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private Long spaceId;
+    private Long imageId;
     private Long userId;
 
-    public SpaceAccessId() {}
+    public ImageRatingId() {}
 
-    public SpaceAccessId(Long spaceId, Long userId) {
-        this.spaceId = spaceId;
+    public ImageRatingId(Long imageId, Long userId) {
+        this.imageId= imageId;
         this.userId = userId;
     }
 
@@ -22,12 +22,12 @@ public class SpaceAccessId implements Serializable {
         return serialVersionUID;
     }
 
-    public Long getSpaceId() {
-        return spaceId;
+    public Long getImageId() {
+        return imageId;
     }
 
-    public void setSpaceId(Long spaceId) {
-        this.spaceId = spaceId;
+    public void setImageId(Long imageId) {
+        this.imageId = imageId;
     }
 
     public Long getUserId() {
@@ -38,18 +38,18 @@ public class SpaceAccessId implements Serializable {
         this.userId = userId;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SpaceAccessId that = (SpaceAccessId) o;
-        return Objects.equals(spaceId, that.spaceId) &&
+        ImageRatingId that = (ImageRatingId) o;
+        return Objects.equals(imageId, that.imageId) &&
                 Objects.equals(userId, that.userId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(spaceId, userId);
+        return Objects.hash(imageId, userId);
     }
 }
-

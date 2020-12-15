@@ -1,4 +1,4 @@
-package com.webapp.compositeKeys;
+package com.webapp.compositekeys;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
