@@ -1,7 +1,6 @@
 package com.webapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.springframework.context.annotation.Lazy;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -17,21 +16,17 @@ public class Profile  implements Serializable {
     private String fullName;
     private String email;
     private Boolean acceptTermsOfService;
+    private String avatarPath;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id")
-    @MapsId
-    private UserAccount userAccount;
+    public String getAvatarPath() {
+        return avatarPath;
+    }
+
+    public void setAvatarPath(String avatarPath) {
+        this.avatarPath = avatarPath;
+    }
 
     public Profile() {
-    }
-
-    public UserAccount getUserAccount() {
-        return userAccount;
-    }
-
-    public void setUserAccount(UserAccount userAccount) {
-        this.userAccount = userAccount;
     }
 
     public Profile(UserAccount user){

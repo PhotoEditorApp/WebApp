@@ -341,20 +341,21 @@ public class UserImageService implements StorageService {
     public byte[] getFilteredImage(Long imageId, Filters filter) throws StorageException{
         UserImage userImage = getUserImage(imageId);
 
-        String filterPath = switch (filter) {
-            case WB -> new WhiteAndBlackFilter(rootLocation, userImage).processing();
-            case SHARP -> new SharpeningFilter(rootLocation, userImage).processing();
-            case BLUR -> new BlurFilter(rootLocation, userImage).processing();
-        };
-
-        try {
-            byte[] bytesToSend = Files.readAllBytes(Paths.get(filterPath));
-            Files.delete(Paths.get(filterPath));
-
-            return bytesToSend;
-        } catch (IOException e) {
-            throw new StorageException(e.getLocalizedMessage());
-        }
+//        String filterPath = switch (filter) {
+//            case WB -> new WhiteAndBlackFilter(rootLocation, userImage).processing();
+//            case SHARP -> new SharpeningFilter(rootLocation, userImage).processing();
+//            case BLUR -> new BlurFilter(rootLocation, userImage).processing();
+//        };
+//
+//        try {
+//            byte[] bytesToSend = Files.readAllBytes(Paths.get(filterPath));
+//            Files.delete(Paths.get(filterPath));
+//
+//            return bytesToSend;
+//        } catch (IOException e) {
+//            throw new StorageException(e.getLocalizedMessage());
+//        }
+        return null;
     }
 
     @Override

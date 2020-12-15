@@ -23,7 +23,8 @@ public class UserAccount implements Serializable {
     private boolean enabled;
     private String registration_time;
 
-    @OneToOne(mappedBy = "userAccount")
+    @OneToOne
+    @JoinColumn(name = "id")
     private Profile profile;
 
     public Profile getProfile() {
