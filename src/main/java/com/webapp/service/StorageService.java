@@ -56,5 +56,9 @@ public interface StorageService {
 
     Resource getPhotoResource(Long id);
 
-    void savePhotoInfo(String name);
+    void savePhotoInfo(Long profileId, String name);
+
+    Resource getPhotoByProfileIdResource(Long profileId);
+
+    byte[] getPreviewOfPhotoByProfileResource(Long profileId);
 }

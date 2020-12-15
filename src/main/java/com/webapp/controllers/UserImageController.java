@@ -263,13 +263,28 @@ public class UserImageController {
     }
 
     @GetMapping("/photo_preview_id")
-    public ResponseEntity<?> getPreviewOfPhotoById(@RequestParam Long id) {
-        byte[] bytes = storageService.getPreviewOfPhotoResource(id);
+    public ResponseEntity<?> getPreviewOfPhotoById(@RequestParam Long PhotoPreviewId) {
+        byte[] bytes = storageService.getPreviewOfPhotoResource(PhotoPreviewId);
 
         try {
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            String.format("attachment; filename=preview_photo_%d", id))
+                            String.format("attachment; filename=preview_photo_%d", PhotoPreviewId))
+                    .body(bytes);
+        } catch (StorageException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/photo_preview_profile_id")
+    public ResponseEntity<?> getPreviewOfPhotoByProfileId(@RequestParam("profile_id") Long profileId) {
+        byte[] bytes = storageService.getPreviewOfPhotoByProfileResource(profileId);
+
+        try {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            String.format("attachment; filename=preview_photo_%d", profileId))
                     .body(bytes);
         } catch (StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -286,7 +301,8 @@ public class UserImageController {
     }
 
     @PostMapping("/photo")
-    public ResponseEntity<?> uploadPhoto(@RequestParam("photo") MultipartFile file) {
+    public ResponseEntity<?> uploadPhoto(@RequestParam("profile_id") Long id,
+                                         @RequestParam("photo") MultipartFile file) {
         String name = storageService.store(file);
         String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download/")
@@ -294,7 +310,7 @@ public class UserImageController {
                 .toUriString();
 
         try {
-            storageService.savePhotoInfo(name);
+            storageService.savePhotoInfo(id, name);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
@@ -306,8 +322,23 @@ public class UserImageController {
 
 
     @GetMapping("/photo_id")
-    public ResponseEntity<?> getPhotoById(@RequestParam Long id) {
-        Resource resource = storageService.getPhotoResource(id);
+    public ResponseEntity<?> getPhotoById(@RequestParam Long photoId) {
+        Resource resource = storageService.getPhotoResource(photoId);
+
+        try {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
+        } catch (IOException | FileNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/photo_profile_id")
+    public ResponseEntity<?> getPhotoByProfileId(@RequestParam Long profileId) {
+        Resource resource = storageService.getPhotoByProfileIdResource(profileId);
 
         try {
             return ResponseEntity.ok()

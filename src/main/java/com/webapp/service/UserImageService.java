@@ -36,12 +36,13 @@ public class UserImageService implements StorageService {
     private final SpaceRepository spaceRepository;
     private final FrameRepository frameRepository;
     private final PhotoRepository photoRepository;
+    private final ProfileRepository profileRepository;
 
     @Autowired
     public UserImageService(StorageProperties properties, UserImageRepository userImageRepository,
                             AverageColorRepository averageColorRepository, UserRepository userRepository,
                             SpaceRepository spaceRepository, FrameRepository frameRepository,
-                            PhotoRepository photoRepository) {
+                            PhotoRepository photoRepository, ProfileRepository profileRepository) {
         this.rootLocation = Paths.get(properties.getLocation());
         this.userImageRepository = userImageRepository;
         this.averageColorRepository = averageColorRepository;
@@ -49,6 +50,7 @@ public class UserImageService implements StorageService {
         this.spaceRepository = spaceRepository;
         this.frameRepository = frameRepository;
         this.photoRepository = photoRepository;
+        this.profileRepository = profileRepository;
     }
 
     public Space getSpace(Long imageId) throws Exception {
@@ -438,12 +440,41 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public void savePhotoInfo(String name) {
+    public void savePhotoInfo(Long profileId, String name) {
         Photo photo = new Photo(name);
         photo.setPreviewPath(new Preview(rootLocation, photo).processing());
         photo.setPath(rootLocation.resolve(name).toString());
 
+        Profile profile = getProfile(profileId);
+        profile.setAvatarPath(rootLocation.resolve(name).toString());
+        photo.setProfile(profile);
+
         photoRepository.save(photo);
+        profileRepository.save(profile);
+    }
+
+    @Override
+    public Resource getPhotoByProfileIdResource(Long profileId) {
+        Profile profile = getProfile(profileId);
+
+        return this.loadAsResource(Paths.get(profile.getAvatarPath()).getFileName().toString());
+    }
+
+    @Override
+    public byte[] getPreviewOfPhotoByProfileResource(Long profileId) {
+        Photo photo = photoRepository.findByProfile(getProfile(profileId))
+                .orElseThrow(() -> new StorageException("There's no photo with such profile id: " + profileId.toString()));
+
+        try {
+            return Files.readAllBytes(Paths.get(photo.getPreviewPath()));
+        } catch (IOException e) {
+            throw new StorageException(e.getLocalizedMessage());
+        }
+    }
+
+    private Profile getProfile(Long profileId) throws StorageException{
+        return profileRepository.findById(profileId)
+                .orElseThrow(() -> new StorageException("There's no profile with such id: " + profileId.toString()));
     }
 
     private UserImage getUserImage(Long imageId) throws StorageException{

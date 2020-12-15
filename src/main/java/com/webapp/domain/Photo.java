@@ -13,6 +13,10 @@ public class Photo implements Picture{
     private String path;
     private String previewPath;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="profile")
+    private Profile profile;
+
     public Photo(){}
 
     public Photo(String name){
@@ -52,5 +56,13 @@ public class Photo implements Picture{
 
     public void setPreviewPath(String previewPath) {
         this.previewPath = previewPath;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 }
