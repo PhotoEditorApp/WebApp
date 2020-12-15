@@ -38,7 +38,7 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<String> signUp(@RequestParam String email, @RequestParam String password) {
         try {
-            ;
+
             userAccountService.userSignUp(email, password);
             return new ResponseEntity<>("user successfully signed up but not activated", HttpStatus.OK);
         } catch (Exception exception) {
