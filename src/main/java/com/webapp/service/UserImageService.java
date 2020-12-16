@@ -218,7 +218,7 @@ public class UserImageService implements StorageService {
     @Override
     public void editInfo(Long imageId, String newName) throws StorageException{
         UserImage userImageOriginal = userImageRepository.findById(imageId)
-                .orElseThrow(() -> new StorageException("Could not find user by id: " + imageId.toString()));
+                .orElseThrow(() -> new StorageException("Could not find image by id: " + imageId.toString()));
 
         Path oldImg = Paths.get(rootLocation.resolve(userImageOriginal.getName()).toString());
         Path newImg = Paths.get(rootLocation.resolve(newName).toString());
@@ -258,12 +258,11 @@ public class UserImageService implements StorageService {
 
             userImage.getSpace().setModifiedTime(new Date(System.currentTimeMillis()));
             try {
+                userImageRepository.delete(userImage);
                 Files.delete(Paths.get(rootLocation.resolve(userImage.getName()).toString()));
             } catch (NoSuchFileException e){
                 throw new FileNotFoundException(String.format("No such file with id=%d in storage", + id));
             }
-
-            userImageRepository.delete(userImage);
         } else {
             throw new FileNotFoundException("File is not found by id: " + id.toString());
         }

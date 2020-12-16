@@ -60,7 +60,8 @@ public class UserAccountService implements UserDetailsService {
             user.setEmail(email);
             user.setPassword(bCryptPasswordEncoder.encode(password));
             user.setActivationCode(UUID.randomUUID().toString());
-            user.setEnabled(false);
+            // must be false in general
+            user.setEnabled(true);
             user.setPassword_hash_algorithm("sha-512");
             user.setRegistration_time(
                     LocalTime.parse("00:00:00").format(DateTimeFormatter.ofPattern("HH:mm:ss"))
@@ -81,7 +82,7 @@ public class UserAccountService implements UserDetailsService {
                         user.getActivationCode()
                 );
 
-                mailSender.send(user.getEmail(), "Activation code", message);
+//                mailSender.send(user.getEmail(), "Activation code", message);
             }
         }else throw new Exception("The user already exists");
     }

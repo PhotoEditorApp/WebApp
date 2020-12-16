@@ -19,15 +19,6 @@ public class Profile  implements Serializable {
     @Column(name = "avatar_path")
     private String avatarPath;
     private Boolean acceptTermsOfService;
-    private String avatarPath;
-
-    public String getAvatarPath() {
-        return avatarPath;
-    }
-
-    public void setAvatarPath(String avatarPath) {
-        this.avatarPath = avatarPath;
-    }
 
     public Profile() {
     }
@@ -84,7 +75,6 @@ public class Profile  implements Serializable {
     public void setAcceptTermsOfService(Boolean acceptTermsOfService) {
         this.acceptTermsOfService = acceptTermsOfService;
     }
-
 
     public String getAvatarPath() {
         return avatarPath;
