@@ -249,6 +249,7 @@ public class UserImageService implements StorageService {
         Path oldImg = Paths.get(rootLocation.resolve(userImageOriginal.getName()).toString());
         Path newImg = Paths.get(rootLocation.resolve(newName).toString());
         try {
+            s3Client.copyObject(NAME_OF_BUCKET, oldImg.toString(), NAME_OF_BUCKET, newImg.toString());
             Files.move(oldImg, newImg);
         } catch (IOException e) {
             throw new StorageException(e.getMessage());
