@@ -1,5 +1,8 @@
 package com.webapp.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.webapp.domain.AverageColor;
 import com.webapp.domain.Frame;
 import com.webapp.domain.*;
@@ -19,6 +22,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
@@ -28,6 +32,7 @@ import java.util.stream.Stream;
 
 @Service
 public class UserImageService implements StorageService {
+    private static final String NAME_OF_BUCKET = "nostalgianetckr";
 
     private final Path rootLocation;
     private final UserImageRepository userImageRepository;
@@ -37,12 +42,14 @@ public class UserImageService implements StorageService {
     private final FrameRepository frameRepository;
     private final PhotoRepository photoRepository;
     private final ProfileRepository profileRepository;
+    private final AmazonS3 s3Client;
 
     @Autowired
     public UserImageService(StorageProperties properties, UserImageRepository userImageRepository,
                             AverageColorRepository averageColorRepository, UserRepository userRepository,
                             SpaceRepository spaceRepository, FrameRepository frameRepository,
-                            PhotoRepository photoRepository, ProfileRepository profileRepository) {
+                            PhotoRepository photoRepository, ProfileRepository profileRepository,
+                            AmazonS3 amazonS3) {
         this.rootLocation = Paths.get(properties.getLocation());
         this.userImageRepository = userImageRepository;
         this.averageColorRepository = averageColorRepository;
@@ -51,6 +58,7 @@ public class UserImageService implements StorageService {
         this.frameRepository = frameRepository;
         this.photoRepository = photoRepository;
         this.profileRepository = profileRepository;
+        this.s3Client = amazonS3;
     }
 
     public Space getSpace(Long imageId) throws Exception {
@@ -138,6 +146,17 @@ public class UserImageService implements StorageService {
         }
     }
 
+    private void storeToAws(MultipartFile file) throws IOException {
+        Path path = rootLocation.resolve(Objects.requireNonNull(file.getOriginalFilename()));
+        File fileToSend = new File(path.toAbsolutePath().normalize().toString());
+        file.transferTo(fileToSend);
+        s3Client.putObject(
+                NAME_OF_BUCKET,
+                path.toString(),
+                fileToSend
+                );
+    }
+
     @Override
     public String store(MultipartFile file) {
         String filename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
@@ -154,6 +173,8 @@ public class UserImageService implements StorageService {
                 Files.copy(inputStream, this.rootLocation.resolve(filename),
                         StandardCopyOption.REPLACE_EXISTING);
             }
+
+            storeToAws(file);
         }
         catch (IOException e) {
             throw new StorageException("Failed to store file " + filename, e);
@@ -185,12 +206,17 @@ public class UserImageService implements StorageService {
         try {
             Path file = load(filename).normalize();
             Resource resource = new UrlResource(file.toUri());
+
+            // if didn't simplified because of slow downloading from aws
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             }
             else {
-                throw new FileNotFoundException(
-                        "Could not read file: " + filename);
+                S3Object s3object = s3Client.getObject(NAME_OF_BUCKET, load(filename).toString());
+                S3ObjectInputStream inputStream = s3object.getObjectContent();
+                Files.write(load(filename), inputStream.readAllBytes());
+
+                return resource;
             }
         }
         catch (IOException e) {
@@ -259,9 +285,11 @@ public class UserImageService implements StorageService {
             userImage.getSpace().setModifiedTime(new Date(System.currentTimeMillis()));
             try {
                 userImageRepository.delete(userImage);
-                Files.delete(Paths.get(rootLocation.resolve(userImage.getName()).toString()));
+                Files.delete(rootLocation.resolve(userImage.getName()));
             } catch (NoSuchFileException e){
                 throw new FileNotFoundException(String.format("No such file with id=%d in storage", + id));
+            } finally {
+                s3Client.deleteObject(NAME_OF_BUCKET, rootLocation.resolve(userImage.getName()).toString());
             }
         } else {
             throw new FileNotFoundException("File is not found by id: " + id.toString());
@@ -337,7 +365,7 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public byte[] getFilteredImage(Long imageId, Filters filter) throws StorageException{
+    public Resource getFilteredImage(Long imageId, Filters filter) throws StorageException{
         UserImage userImage = getUserImage(imageId);
 
         String filterPath = switch (filter) {
@@ -347,32 +375,19 @@ public class UserImageService implements StorageService {
             case SEPIA -> new SepiaFilter(rootLocation, userImage).processing();
         };
 
-        try {
-            byte[] bytesToSend = Files.readAllBytes(Paths.get(filterPath));
-            Files.delete(Paths.get(filterPath));
 
-            return bytesToSend;
-        } catch (IOException e) {
-            throw new StorageException(e.getLocalizedMessage());
-        }
+        return this.loadAsResource(Paths.get(filterPath).getFileName().toString());
     }
 
     @Override
-    public byte[] getImageWithFrame(Long imageId, Long frameId) throws StorageException{
+    public Resource getImageWithFrame(Long imageId, Long frameId) throws StorageException{
         UserImage userImage = getUserImage(imageId);
         Frame frame = getFrame(frameId);
 
-        String filterPath = new com.webapp.imageprocessing.Frame(rootLocation, userImage, frame)
+        String framePath = new com.webapp.imageprocessing.Frame(rootLocation, userImage, frame)
                 .processing();
 
-        try {
-            byte[] bytesToSend = Files.readAllBytes(Paths.get(filterPath));
-            Files.delete(Paths.get(filterPath));
-
-            return bytesToSend;
-        } catch (IOException e) {
-            throw new StorageException(e.getMessage());
-        }
+        return this.loadAsResource(Paths.get(framePath).getFileName().toString());
     }
 
     @Override
@@ -385,15 +400,11 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public byte[] getPreviewOfFrameResource(Long id) throws StorageException{
+    public Resource getPreviewOfFrameResource(Long id) throws StorageException{
         Frame frame = frameRepository.findById(id)
                 .orElseThrow(() -> new StorageException(String.format("There's no such frame with id=%d", id)));
 
-        try {
-            return Files.readAllBytes(Paths.get(frame.getPreviewPath()));
-        } catch (IOException e) {
-            throw new StorageException(e.getLocalizedMessage());
-        }
+        return this.loadAsResource(Paths.get(frame.getPreviewPath()).getFileName().toString());
     }
 
     @Override
@@ -406,15 +417,11 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public byte[] getPreviewOfPhotoResource(Long id) {
+    public Resource getPreviewOfPhotoResource(Long id) {
         Photo photo = photoRepository.findById(id)
                 .orElseThrow(() -> new StorageException(String.format("There's no such photo with id=%d", id)));
 
-        try {
-            return Files.readAllBytes(Paths.get(photo.getPreviewPath()));
-        } catch (IOException e) {
-            throw new StorageException(e.getLocalizedMessage());
-        }
+        return this.loadAsResource(Paths.get(photo.getPreviewPath()).getFileName().toString());
     }
 
     @Override
@@ -460,15 +467,11 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public byte[] getPreviewOfPhotoByProfileResource(Long profileId) {
+    public Resource getPreviewOfPhotoByProfileResource(Long profileId) {
         Photo photo = photoRepository.findByProfile(getProfile(profileId))
                 .orElseThrow(() -> new StorageException("There's no photo with such profile id: " + profileId.toString()));
 
-        try {
-            return Files.readAllBytes(Paths.get(photo.getPreviewPath()));
-        } catch (IOException e) {
-            throw new StorageException(e.getLocalizedMessage());
-        }
+        return this.loadAsResource(Paths.get(photo.getPreviewPath()).getFileName().toString());
     }
 
     private Profile getProfile(Long profileId) throws StorageException{

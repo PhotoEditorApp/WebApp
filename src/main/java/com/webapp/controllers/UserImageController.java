@@ -91,23 +91,33 @@ public class UserImageController {
     @GetMapping("/filter")
     public ResponseEntity<?> applyFilterByImageId(@RequestParam Long id,
                                                   @RequestParam Filters filter) {
-        byte[] bytesToSend = storageService.getFilteredImage(id, filter);
+        Resource resource = storageService.getFilteredImage(id, filter);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        String.format("attachment; filename=\"filtered_img_%d\"", id))
-                .body(bytesToSend);
+        try {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
     }
 
     @GetMapping("/frame")
     public ResponseEntity<?> addFrameByImageId(@RequestParam Long id,
                                                @RequestParam Long frameId) {
-        byte[] bytesToSend = storageService.getImageWithFrame(id, frameId);
+        Resource resource = storageService.getImageWithFrame(id, frameId);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        String.format("attachment; filename=\"frame_%d_%d\"", id, frameId))
-                .body(bytesToSend);
+        try {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
     }
 
     @GetMapping("/get_preview_img_id")
@@ -241,14 +251,14 @@ public class UserImageController {
 
     @GetMapping("/frame_preview_id")
     public ResponseEntity<?> getPreviewOfFrameById(@RequestParam Long id) {
-        byte[] bytes = storageService.getPreviewOfFrameResource(id);
+        Resource resource = storageService.getPreviewOfFrameResource(id);
 
         try {
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            String.format("attachment; filename=preview_%d", id))
-                    .body(bytes);
-        } catch (StorageException e) {
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
+        } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
@@ -264,14 +274,14 @@ public class UserImageController {
 
     @GetMapping("/photo_preview_id")
     public ResponseEntity<?> getPreviewOfPhotoById(@RequestParam Long PhotoPreviewId) {
-        byte[] bytes = storageService.getPreviewOfPhotoResource(PhotoPreviewId);
+        Resource resource = storageService.getPreviewOfPhotoResource(PhotoPreviewId);
 
         try {
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            String.format("attachment; filename=preview_photo_%d", PhotoPreviewId))
-                    .body(bytes);
-        } catch (StorageException e) {
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
+        } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
@@ -279,14 +289,14 @@ public class UserImageController {
 
     @GetMapping("/photo_preview_profile_id")
     public ResponseEntity<?> getPreviewOfPhotoByProfileId(@RequestParam("profile_id") Long profileId) {
-        byte[] bytes = storageService.getPreviewOfPhotoByProfileResource(profileId);
+        Resource resource = storageService.getPreviewOfPhotoByProfileResource(profileId);
 
         try {
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            String.format("attachment; filename=preview_photo_%d", profileId))
-                    .body(bytes);
-        } catch (StorageException e) {
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
+        } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }

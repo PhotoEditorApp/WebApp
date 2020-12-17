@@ -40,17 +40,17 @@ public interface StorageService {
 
     Resource getPreview(Long ids) throws StorageException;
 
-    byte[] getFilteredImage(Long imageId, Filters filter) throws StorageException;
+    Resource getFilteredImage(Long imageId, Filters filter) throws StorageException;
 
-    byte[] getImageWithFrame(Long imageId, Long frameId) throws StorageException;
+    Resource getImageWithFrame(Long imageId, Long frameId) throws StorageException;
 
     void saveFrameInfo(String name);
 
-    byte[] getPreviewOfFrameResource(Long id) throws StorageException;
+    Resource getPreviewOfFrameResource(Long id) throws StorageException;
 
     List<Long> getListOfFramesPreview();
 
-    byte[] getPreviewOfPhotoResource(Long id);
+    Resource getPreviewOfPhotoResource(Long id);
 
     List<Long> getListOfPhotoPreview();
 
@@ -60,5 +60,5 @@ public interface StorageService {
 
     Resource getPhotoByProfileIdResource(Long profileId);
 
-    byte[] getPreviewOfPhotoByProfileResource(Long profileId);
+    Resource getPreviewOfPhotoByProfileResource(Long profileId);
 }

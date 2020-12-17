@@ -52,5 +52,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui
     compile group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.4.8'
 
+    // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk
+    compile group: 'com.amazonaws', name: 'aws-java-sdk', version: '1.11.920'
+
+
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:2.3.4.RELEASE"
 }
