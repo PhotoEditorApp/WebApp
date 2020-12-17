@@ -212,9 +212,9 @@ public class UserImageService implements StorageService {
                 return resource;
             }
             else {
-                S3Object s3object = s3Client.getObject(NAME_OF_BUCKET, load(filename).toString());
+                S3Object s3object = s3Client.getObject(NAME_OF_BUCKET, file.toString());
                 S3ObjectInputStream inputStream = s3object.getObjectContent();
-                Files.write(load(filename), inputStream.readAllBytes());
+                Files.write(file, inputStream.readAllBytes());
 
                 return resource;
             }
