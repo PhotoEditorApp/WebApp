@@ -169,6 +169,19 @@ public class UserImageController {
                 .body(new ActionMessage("The image was deleted"));
     }
 
+    @DeleteMapping("/frame")
+    public ResponseEntity<ActionMessage> deleteFrameById(@RequestParam Long id) {
+        try {
+            storageService.deleteFrame(id);
+        } catch (FileNotFoundException | IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
+
+        return ResponseEntity.ok()
+                .body(new ActionMessage("The frame was deleted"));
+    }
+
     @PutMapping("/edit_info")
     public ResponseEntity<ActionMessage> editImageInfo(@RequestParam Long imageId,
                                                        @RequestParam String newName) {

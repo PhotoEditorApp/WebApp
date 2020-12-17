@@ -152,7 +152,7 @@ public class UserImageService implements StorageService {
         file.transferTo(fileToSend);
         s3Client.putObject(
                 NAME_OF_BUCKET,
-                path.toString(),
+                path.normalize().toString(),
                 fileToSend
                 );
     }
@@ -246,8 +246,8 @@ public class UserImageService implements StorageService {
         UserImage userImageOriginal = userImageRepository.findById(imageId)
                 .orElseThrow(() -> new StorageException("Could not find image by id: " + imageId.toString()));
 
-        Path oldImg = Paths.get(rootLocation.resolve(userImageOriginal.getName()).toString());
-        Path newImg = Paths.get(rootLocation.resolve(newName).toString());
+        Path oldImg = rootLocation.resolve(userImageOriginal.getName()).normalize();
+        Path newImg = rootLocation.resolve(newName).normalize();
         try {
             s3Client.copyObject(NAME_OF_BUCKET, oldImg.toString(), NAME_OF_BUCKET, newImg.toString());
             Files.move(oldImg, newImg);
@@ -290,7 +290,7 @@ public class UserImageService implements StorageService {
             } catch (NoSuchFileException e){
                 throw new FileNotFoundException(String.format("No such file with id=%d in storage", + id));
             } finally {
-                s3Client.deleteObject(NAME_OF_BUCKET, rootLocation.resolve(userImage.getName()).toString());
+                s3Client.deleteObject(NAME_OF_BUCKET, rootLocation.resolve(userImage.getName()).normalize().toString());
             }
         } else {
             throw new FileNotFoundException("File is not found by id: " + id.toString());
@@ -344,8 +344,7 @@ public class UserImageService implements StorageService {
                     Files.size(Paths.get(imagePath)), averageColor,
                     imageName, space);
 
-            String previewPath = new Preview(rootLocation, userImage).processing();
-            userImage.setPreviewPath(previewPath);
+            userImage.setPreviewPath(makePreviewAndSendToAWS(rootLocation, userImage));
             userImage.getSpace().setModifiedTime(new Date(System.currentTimeMillis()));
 
             userImageRepository.save(userImage);
@@ -354,15 +353,24 @@ public class UserImageService implements StorageService {
         }
     }
 
+    public String makePreviewAndSendToAWS(Path rootLocation, Picture userImage) {
+        Path previewPath = Paths.get(new Preview(rootLocation, userImage).processing());
+        File fileToSend = new File(previewPath.toAbsolutePath().normalize().toString());
+        s3Client.putObject(
+                NAME_OF_BUCKET,
+                previewPath.toString(),
+                fileToSend
+        );
+
+        return previewPath.toString();
+    }
+
     // We don't use template method here because of Spring DI in controller (UserImageController)
     @Override
     public Resource getPreview(Long id) throws StorageException{
         UserImage userImage = getUserImage(id);
 
-        String previewPath = new Preview(rootLocation, userImage).processing();
-        saveInfo(userImage.getUser().getId(), userImage.getSpace().getId(), previewPath);
-
-        return this.loadAsResource(Paths.get(previewPath).getFileName().toString());
+        return this.loadAsResource(Paths.get(userImage.getPreviewPath()).getFileName().toString());
     }
 
     @Override
@@ -394,7 +402,7 @@ public class UserImageService implements StorageService {
     @Override
     public void saveFrameInfo(String name) {
         Frame frame = new Frame(name);
-        frame.setPreviewPath(new Preview(rootLocation, frame).processing());
+        frame.setPreviewPath(makePreviewAndSendToAWS(rootLocation, frame));
         frame.setPath(rootLocation.resolve(name).toString());
 
         frameRepository.save(frame);
@@ -449,7 +457,7 @@ public class UserImageService implements StorageService {
     @Override
     public void savePhotoInfo(Long profileId, String name) {
         Photo photo = new Photo(name);
-        photo.setPreviewPath(new Preview(rootLocation, photo).processing());
+        photo.setPreviewPath(makePreviewAndSendToAWS(rootLocation, photo));
         photo.setPath(rootLocation.resolve(name).toString());
 
         Profile profile = getProfile(profileId);
@@ -473,6 +481,21 @@ public class UserImageService implements StorageService {
                 .orElseThrow(() -> new StorageException("There's no photo with such profile id: " + profileId.toString()));
 
         return this.loadAsResource(Paths.get(photo.getPreviewPath()).getFileName().toString());
+    }
+
+    @Override
+    public void deleteFrame(Long id) throws FileNotFoundException, IOException {
+        Frame frame = frameRepository.findById(id)
+                .orElseThrow(() -> new FileNotFoundException(String.format("There's no frame with such id=%d", id)));
+
+        try {
+            frameRepository.delete(frame);
+            Files.delete(rootLocation.resolve(frame.getName()).normalize());
+        } catch (NoSuchFileException e){
+            throw new FileNotFoundException(String.format("No such file with id=%d in storage", + id));
+        } finally {
+            s3Client.deleteObject(NAME_OF_BUCKET, rootLocation.resolve(frame.getName()).normalize().toString());
+        }
     }
 
     private Profile getProfile(Long profileId) throws StorageException{
