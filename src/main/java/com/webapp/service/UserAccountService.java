@@ -9,6 +9,7 @@ import com.webapp.json.UserAccountResponseMessage;
 import com.webapp.repositories.SpaceRepository;
 import com.webapp.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -41,6 +42,8 @@ public class UserAccountService implements UserDetailsService {
     @Autowired
     private SpaceRepository spaceRepository;
 
+    @Value("${host}")
+    private String host;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -60,8 +63,7 @@ public class UserAccountService implements UserDetailsService {
             user.setEmail(email);
             user.setPassword(bCryptPasswordEncoder.encode(password));
             user.setActivationCode(UUID.randomUUID().toString());
-            // must be false in general
-            user.setEnabled(true);
+            user.setEnabled(false);
             user.setPassword_hash_algorithm("sha-512");
             user.setRegistration_time(
                     LocalTime.parse("00:00:00").format(DateTimeFormatter.ofPattern("HH:mm:ss"))
@@ -71,18 +73,19 @@ public class UserAccountService implements UserDetailsService {
             userRepository.save(user);
             profileService.save(new Profile(user));
             // send confirmation letter to email
+
             if (!user.getEmail().isEmpty()) {
                 String message = String.format(
                         "Hello, %s! \n" +
                                 "Welcome to PhotoEditorApp. " +
-                                "Follow the <a href=http://localhost:8080/user/activate/%s>" +
+                                "Follow the <a href=http://" + host + ":8080/user/activate/%s>" +
                                 "link" +
                                 "</a>.",
                         user.getEmail(),
                         user.getActivationCode()
                 );
 
-//                mailSender.send(user.getEmail(), "Activation code", message);
+                mailSender.send(user.getEmail(), "Activation code", message);
             }
         }else throw new Exception("The user already exists");
     }
