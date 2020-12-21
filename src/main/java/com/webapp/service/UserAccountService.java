@@ -78,7 +78,7 @@ public class UserAccountService implements UserDetailsService {
                 String message = String.format(
                         "Hello, %s! \n" +
                                 "Welcome to PhotoEditorApp. " +
-                                "Follow the <a href=http://" + host + ":8080/user/activate/%s>" +
+                                "Follow the <a href=https://" + host + ":8443/user/activate/%s>" +
                                 "link" +
                                 "</a>.",
                         user.getEmail(),

@@ -18,4 +18,4 @@ ADD scripts scripts
 ADD uploads uploads
 ARG JAR_FILE=target/*.jar
 ADD ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-Dserver.port=$PORT","$JAVA_OPTS","-jar","/app.jar"]
+ENTRYPOINT ["java", "-Dfile.encoding=UTF8", "-jar","/app.jar"]
