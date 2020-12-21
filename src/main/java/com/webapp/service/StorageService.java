@@ -16,17 +16,17 @@ public interface StorageService {
 
     void init();
 
-    String store(MultipartFile file);
+    String store(MultipartFile file) throws StorageException;
 
-    Stream<Path> loadAll();
+    Stream<Path> loadAll() throws StorageException;
 
     Path load(String filename);
 
-    Resource loadAsResource(String filename);
+    Resource loadAsResource(String filename) throws StorageException;
 
     void deleteAll();
 
-    Resource getResource(Long imageId);
+    Resource getResource(Long imageId) throws FileNotFoundException;
 
     Resource getFrameResource(Long frameId) throws FileNotFoundException;
 
@@ -45,23 +45,25 @@ public interface StorageService {
 
     Resource getImageWithFrame(Long imageId, Long frameId) throws StorageException;
 
-    void saveFrameInfo(String name);
+    void saveFrameInfo(String name) throws IllegalArgumentException, StorageException;
 
     Resource getPreviewOfFrameResource(Long id) throws StorageException;
 
     List<Long> getListOfFramesPreview();
 
-    Resource getPreviewOfPhotoResource(Long id);
+    Resource getPreviewOfPhotoResource(Long id) throws StorageException;
 
     List<Long> getListOfPhotoPreview();
 
-    Resource getPhotoResource(Long id);
+    Resource getPhotoResource(Long id)
+            throws IllegalArgumentException, FileNotFoundException;
 
-    void savePhotoInfo(Long profileId, String name);
+    void savePhotoInfo(Long profileId, String name)
+            throws IllegalArgumentException, StorageException;
 
-    Resource getPhotoByProfileIdResource(Long profileId);
+    Resource getPhotoByProfileIdResource(Long profileId) throws StorageException;
 
-    Resource getPreviewOfPhotoByProfileResource(Long profileId);
+    Resource getPreviewOfPhotoByProfileResource(Long profileId) throws StorageException;
 
     void deleteFrame(Long id) throws FileNotFoundException, IOException;
 }

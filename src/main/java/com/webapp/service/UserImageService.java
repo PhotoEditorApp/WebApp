@@ -146,7 +146,8 @@ public class UserImageService implements StorageService {
         }
     }
 
-    private void storeToAws(MultipartFile file) throws IOException {
+    private void storeToAws(MultipartFile file)
+            throws IOException, com.amazonaws.SdkClientException{
         Path path = rootLocation.resolve(Objects.requireNonNull(file.getOriginalFilename()));
         File fileToSend = new File(path.toAbsolutePath().normalize().toString());
         file.transferTo(fileToSend);
@@ -158,7 +159,7 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public String store(MultipartFile file) {
+    public String store(MultipartFile file) throws StorageException{
         String filename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         try {
             if (file.isEmpty()) {
@@ -172,11 +173,12 @@ public class UserImageService implements StorageService {
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, this.rootLocation.resolve(filename),
                         StandardCopyOption.REPLACE_EXISTING);
+                storeToAws(file);
             }
-
-            storeToAws(file);
         }
-        catch (IOException e) {
+        catch (IOException
+                | java.nio.file.InvalidPathException
+                | com.amazonaws.SdkClientException e) {
             throw new StorageException("Failed to store file " + filename, e);
         }
 
@@ -184,7 +186,7 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public Stream<Path> loadAll() {
+    public Stream<Path> loadAll() throws StorageException{
         try {
             return Files.walk(this.rootLocation, 1)
                     .filter(path -> !path.equals(this.rootLocation))
@@ -202,7 +204,7 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public Resource loadAsResource(String filename) {
+    public Resource loadAsResource(String filename) throws StorageException{
         try {
             Path file = load(filename).normalize();
             Resource resource = new UrlResource(file.toUri());
@@ -219,6 +221,9 @@ public class UserImageService implements StorageService {
                 return resource;
             }
         }
+        catch (com.amazonaws.SdkClientException e){
+            throw new StorageException(e.getMessage());
+        }
         catch (IOException e) {
             throw new FileNotFoundException("Could not read file: " + filename, e);
         }
@@ -230,7 +235,7 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public Resource getResource(Long imageId){
+    public Resource getResource(Long imageId) throws FileNotFoundException{
         Optional<UserImage> userImage = userImageRepository.findById(imageId);
 
         if (userImage.isPresent()){
@@ -251,7 +256,7 @@ public class UserImageService implements StorageService {
         try {
             s3Client.copyObject(NAME_OF_BUCKET, oldImg.toString(), NAME_OF_BUCKET, newImg.toString());
             Files.move(oldImg, newImg);
-        } catch (IOException e) {
+        } catch (IOException | com.amazonaws.SdkClientException e) {
             throw new StorageException(e.getMessage());
         }
 
@@ -277,7 +282,8 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public void deleteImage(Long id) throws IOException, FileNotFoundException{
+    public void deleteImage(Long id)
+            throws IOException, FileNotFoundException, com.amazonaws.SdkClientException{
         Optional<UserImage> userImageOptional = userImageRepository.findById(id);
 
         if (userImageOptional.isPresent()){
@@ -322,8 +328,8 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public void saveInfo(Long userId, Long spaceId, String imagePath) throws IllegalArgumentException,
-            StorageException{
+    public void saveInfo(Long userId, Long spaceId, String imagePath)
+            throws IllegalArgumentException, StorageException{
         UserAccount user = userRepository.findById(userId)
                 .orElseThrow(() -> new StorageException("No user with such id: " + userId.toString()));
         String imageName = Paths.get(imagePath).getFileName().toString();
@@ -353,14 +359,19 @@ public class UserImageService implements StorageService {
         }
     }
 
-    public String makePreviewAndSendToAWS(Path rootLocation, Picture userImage) {
+    public String makePreviewAndSendToAWS(Path rootLocation, Picture userImage)
+            throws StorageException{
         Path previewPath = Paths.get(new Preview(rootLocation, userImage).processing());
         File fileToSend = new File(previewPath.toAbsolutePath().normalize().toString());
-        s3Client.putObject(
-                NAME_OF_BUCKET,
-                previewPath.toString(),
-                fileToSend
-        );
+        try {
+            s3Client.putObject(
+                    NAME_OF_BUCKET,
+                    previewPath.toString(),
+                    fileToSend
+            );
+        } catch (com.amazonaws.SdkClientException e){
+            throw new StorageException(e.getMessage());
+        }
 
         return previewPath.toString();
     }
@@ -400,7 +411,8 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public void saveFrameInfo(String name) {
+    public void saveFrameInfo(String name)
+            throws IllegalArgumentException, StorageException{
         Frame frame = new Frame(name);
         frame.setPreviewPath(makePreviewAndSendToAWS(rootLocation, frame));
         frame.setPath(rootLocation.resolve(name).toString());
@@ -426,7 +438,7 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public Resource getPreviewOfPhotoResource(Long id) {
+    public Resource getPreviewOfPhotoResource(Long id) throws StorageException{
         Photo photo = photoRepository.findById(id)
                 .orElseThrow(() -> new StorageException(String.format("There's no such photo with id=%d", id)));
 
@@ -443,7 +455,8 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public Resource getPhotoResource(Long id) {
+    public Resource getPhotoResource(Long id)
+            throws IllegalArgumentException, FileNotFoundException{
         Optional<Photo> photo = photoRepository.findById(id);
 
         if (photo.isPresent()){
@@ -455,7 +468,8 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public void savePhotoInfo(Long profileId, String name) {
+    public void savePhotoInfo(Long profileId, String name)
+            throws IllegalArgumentException, StorageException{
         Photo photo = new Photo(name);
         photo.setPreviewPath(makePreviewAndSendToAWS(rootLocation, photo));
         photo.setPath(rootLocation.resolve(name).toString());
@@ -469,14 +483,14 @@ public class UserImageService implements StorageService {
     }
 
     @Override
-    public Resource getPhotoByProfileIdResource(Long profileId) {
+    public Resource getPhotoByProfileIdResource(Long profileId) throws StorageException{
         Profile profile = getProfile(profileId);
 
         return this.loadAsResource(Paths.get(profile.getAvatarPath()).getFileName().toString());
     }
 
     @Override
-    public Resource getPreviewOfPhotoByProfileResource(Long profileId) {
+    public Resource getPreviewOfPhotoByProfileResource(Long profileId) throws StorageException{
         Photo photo = photoRepository.findByProfile(getProfile(profileId))
                 .orElseThrow(() -> new StorageException("There's no photo with such profile id: " + profileId.toString()));
 

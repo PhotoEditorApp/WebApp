@@ -61,13 +61,13 @@ public class UserImageController {
 
     @GetMapping("/get_image_path")
     public ResponseEntity<?> getImageByPath(@RequestParam String path) {
-        Resource resource = storageService.loadAsResource(Paths.get(path).getFileName().toString());
-
         try {
+            Resource resource = storageService.loadAsResource(Paths.get(path).getFileName().toString());
+
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"").body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
-        } catch (IOException e) {
+        } catch (IOException | StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
@@ -75,14 +75,14 @@ public class UserImageController {
 
     @GetMapping("/get_image_id")
     public ResponseEntity<?> getImageById(@RequestParam Long id) {
-        Resource resource = storageService.getResource(id);
-
         try {
+            Resource resource = storageService.getResource(id);
+
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
-        } catch (IOException e) {
+        } catch (IOException | FileNotFoundException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
@@ -91,14 +91,14 @@ public class UserImageController {
     @GetMapping("/filter")
     public ResponseEntity<?> applyFilterByImageId(@RequestParam Long id,
                                                   @RequestParam Filters filter) {
-        Resource resource = storageService.getFilteredImage(id, filter);
-
         try {
+            Resource resource = storageService.getFilteredImage(id, filter);
+
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
-        } catch (IOException e) {
+        } catch (IOException | StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
@@ -107,14 +107,14 @@ public class UserImageController {
     @GetMapping("/frame")
     public ResponseEntity<?> addFrameByImageId(@RequestParam Long id,
                                                @RequestParam Long frameId) {
-        Resource resource = storageService.getImageWithFrame(id, frameId);
-
         try {
+            Resource resource = storageService.getImageWithFrame(id, frameId);
+
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
-        } catch (IOException e) {
+        } catch (IOException | StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
@@ -122,14 +122,14 @@ public class UserImageController {
 
     @GetMapping("/get_preview_img_id")
     public ResponseEntity<?> getPreviewByImageId(@RequestParam Long id) {
-        Resource resource = storageService.getPreview(id);
-
         try {
+            Resource resource = storageService.getPreview(id);
+
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
-        } catch (IOException e) {
+        } catch (IOException | StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
@@ -137,49 +137,49 @@ public class UserImageController {
 
     @GetMapping("/get_collage")
     public ResponseEntity<?> getCollage(@RequestParam("ids") List<Long> ids) {
-        if (!ids.isEmpty()) {
-            Resource resource = storageService.getCollage(ids);
-
-            try {
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION,
-                                "attachment; filename=\"" + resource.getFilename() + "\"")
-                        .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
-            } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ActionMessage(e.getMessage()));
-            }
+        if (ids.isEmpty() || ids.size() > 4) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ActionMessage("There's no id to make a collage" +
+                            " or you're trying to send to much photos (>4)"));
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ActionMessage("There's no id to make a collage"));
+        try {
+            Resource resource = storageService.getCollage(ids);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
+        } catch (IOException | StorageException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ActionMessage(e.getMessage()));
+        }
     }
 
     @DeleteMapping("/delete_image")
     public ResponseEntity<ActionMessage> deleteImageById(@RequestParam Long id) {
         try {
-
             storageService.deleteImage(id);
-        } catch (FileNotFoundException | IOException e) {
+
+            return ResponseEntity.ok()
+                    .body(new ActionMessage("The image was deleted"));
+        } catch (IOException | com.amazonaws.SdkClientException | FileNotFoundException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
-
-        return ResponseEntity.ok()
-                .body(new ActionMessage("The image was deleted"));
     }
 
     @DeleteMapping("/frame")
     public ResponseEntity<ActionMessage> deleteFrameById(@RequestParam Long id) {
         try {
             storageService.deleteFrame(id);
+
+            return ResponseEntity.ok()
+                    .body(new ActionMessage("The frame was deleted"));
         } catch (FileNotFoundException | IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
-
-        return ResponseEntity.ok()
-                .body(new ActionMessage("The frame was deleted"));
     }
 
     @PutMapping("/edit_info")
@@ -187,33 +187,33 @@ public class UserImageController {
                                                        @RequestParam String newName) {
         try {
             storageService.editInfo(imageId, new String(newName.getBytes(), StandardCharsets.UTF_8));
+
+            return ResponseEntity.ok()
+                    .body(new ActionMessage("Image information has been successfully edited"));
         } catch (StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
-
-        return ResponseEntity.ok()
-                .body(new ActionMessage("Image information has been successfully edited"));
     }
 
     @PostMapping("/upload_image")
     public ResponseEntity<?> uploadImage(@RequestParam("user_id") Long user_id, @RequestParam("space_id") Long space_id,
                                          @RequestParam("file") MultipartFile file) {
-        String name = storageService.store(file);
-        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/download/")
-                .path(name)
-                .toUriString();
-
         try {
+            String name = storageService.store(file);
+            String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/download/")
+                    .path(name)
+                    .toUriString();
+
             storageService.saveInfo(user_id, space_id, "uploads/" + name);
-        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity.ok()
+                    .body(new FileResponse(name, uri, file.getContentType(), file.getSize()));
+        } catch (IllegalArgumentException | StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
-
-        return ResponseEntity.ok()
-                .body(new FileResponse(name, uri, file.getContentType(), file.getSize()));
     }
 
     @PostMapping("/upload_multiple_images")
@@ -229,29 +229,29 @@ public class UserImageController {
 
     @PostMapping("/upload_frame")
     public ResponseEntity<?> uploadFrame(@RequestParam("frame") MultipartFile file) {
-        String name = storageService.store(file);
-        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/download/")
-                .path(name)
-                .toUriString();
-
         try {
+            String name = storageService.store(file);
+            String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/download/")
+                    .path(name)
+                    .toUriString();
+
             storageService.saveFrameInfo(name);
-        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity.ok()
+                    .body(new FileResponse(name, uri, file.getContentType(), file.getSize()));
+        } catch (IllegalArgumentException | StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
-
-        return ResponseEntity.ok()
-                .body(new FileResponse(name, uri, file.getContentType(), file.getSize()));
     }
 
 
     @GetMapping("/get_frame_id")
     public ResponseEntity<?> getFrameById(@RequestParam Long id) {
-        Resource resource = storageService.getFrameResource(id);
-
         try {
+            Resource resource = storageService.getFrameResource(id);
+
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"")
@@ -264,14 +264,14 @@ public class UserImageController {
 
     @GetMapping("/frame_preview_id")
     public ResponseEntity<?> getPreviewOfFrameById(@RequestParam Long id) {
-        Resource resource = storageService.getPreviewOfFrameResource(id);
-
         try {
+            Resource resource = storageService.getPreviewOfFrameResource(id);
+
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
-        } catch (IOException e) {
+        } catch (IOException | StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
@@ -287,14 +287,14 @@ public class UserImageController {
 
     @GetMapping("/photo_preview_id")
     public ResponseEntity<?> getPreviewOfPhotoById(@RequestParam Long PhotoPreviewId) {
-        Resource resource = storageService.getPreviewOfPhotoResource(PhotoPreviewId);
-
         try {
+            Resource resource = storageService.getPreviewOfPhotoResource(PhotoPreviewId);
+
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
-        } catch (IOException e) {
+        } catch (IOException | StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
@@ -302,14 +302,14 @@ public class UserImageController {
 
     @GetMapping("/photo_preview_profile_id")
     public ResponseEntity<?> getPreviewOfPhotoByProfileId(@RequestParam("profile_id") Long profileId) {
-        Resource resource = storageService.getPreviewOfPhotoByProfileResource(profileId);
-
         try {
+            Resource resource = storageService.getPreviewOfPhotoByProfileResource(profileId);
+
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
-        } catch (IOException e) {
+        } catch (IOException | StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
@@ -326,34 +326,34 @@ public class UserImageController {
     @PostMapping("/photo")
     public ResponseEntity<?> uploadPhoto(@RequestParam("profile_id") Long id,
                                          @RequestParam("photo") MultipartFile file) {
-        String name = storageService.store(file);
-        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/download/")
-                .path(name)
-                .toUriString();
-
         try {
+            String name = storageService.store(file);
+            String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/download/")
+                    .path(name)
+                    .toUriString();
+
             storageService.savePhotoInfo(id, name);
-        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity.ok()
+                    .body(new FileResponse(name, uri, file.getContentType(), file.getSize()));
+        } catch (IllegalArgumentException | StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
-
-        return ResponseEntity.ok()
-                .body(new FileResponse(name, uri, file.getContentType(), file.getSize()));
     }
 
 
     @GetMapping("/photo_id")
     public ResponseEntity<?> getPhotoById(@RequestParam Long photoId) {
-        Resource resource = storageService.getPhotoResource(photoId);
-
         try {
+            Resource resource = storageService.getPhotoResource(photoId);
+
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
-        } catch (IOException | FileNotFoundException e) {
+        } catch (IOException | IllegalArgumentException | FileNotFoundException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
@@ -361,14 +361,14 @@ public class UserImageController {
 
     @GetMapping("/photo_profile_id")
     public ResponseEntity<?> getPhotoByProfileId(@RequestParam Long profileId) {
-        Resource resource = storageService.getPhotoByProfileIdResource(profileId);
-
         try {
+            Resource resource = storageService.getPhotoByProfileIdResource(profileId);
+
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(Files.readAllBytes(Paths.get(resource.getFile().getAbsolutePath())));
-        } catch (IOException | FileNotFoundException e) {
+        } catch (IOException | StorageException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ActionMessage(e.getMessage()));
         }
