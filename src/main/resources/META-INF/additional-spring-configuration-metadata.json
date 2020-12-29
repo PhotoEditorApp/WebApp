@@ -1,0 +1,18 @@
+{
+  "properties": [
+    {
+      "name": "host",
+      "type": "java.lang.String",
+      "description": "A variable to define a host ip"
+    },
+    {
+      "name": "aws.access.key",
+      "type": "java.lang.String",
+      "description": "Access key of aws storage"
+    },
+    {
+      "name": "aws.secret.key",
+      "type": "java.lang.String",
+      "description": "Secret key of aws storage"
+    }
+  ] }
